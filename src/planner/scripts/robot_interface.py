@@ -149,8 +149,8 @@ if __name__ == "__main__":
     # rospy.loginfo("Robot action interface ready!")
     # topic = 'chatter'
     # pub = rospy.Publisher(topic, String)
-    rospy.init_node('talker', anonymous=True)
-    rospy.loginfo("I will publish to the topic %s")
+    # rospy.init_node('talker', anonymous=True)
+    # rospy.loginfo("I will publish to the topic %s")
     # while not rospy.is_shutdown():
     #     str = "hello world %s" % rospy.get_time()
     #     # str = self.map
