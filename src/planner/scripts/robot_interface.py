@@ -141,10 +141,7 @@ class Lab1Interface:
 
 
 if __name__ == "__main__":
-    rospy.init_node("lab1_robot_interface")
-    interface = Lab1Interface()
-    rospy.loginfo("Robot action interface ready!")
-    rospy.spin()
+
 
 
     def talker():
@@ -161,6 +158,11 @@ if __name__ == "__main__":
 
     talker()
 
+
+    rospy.init_node("lab1_robot_interface")
+    interface = Lab1Interface()
+    rospy.loginfo("Robot action interface ready!")
+    rospy.spin()
     ##################
     # rospy.init_node("lab1_robot_interface")
     # interface = Lab1Interface()
