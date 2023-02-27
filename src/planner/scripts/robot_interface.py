@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 import time
 import numpy as np
+
+#######
+from rospy import numpy_msg
+#######
+
 import rospy
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
@@ -139,9 +144,22 @@ if __name__ == "__main__":
     rospy.init_node("lab1_robot_interface")
     interface = Lab1Interface()
     rospy.loginfo("Robot action interface ready!")
+    rospy.spin()
 
 
+    def talker():
+        topic = 'floats'
+        pub = rospy.Publisher(topic, numpy_msg(Floats))
+        rospy.init_node(topic, anonymous=True)
+        r = rospy.Rate(10)  # 10hz
+        rospy.loginfo("I will publish to the topic %s", topic)
+        while not rospy.is_shutdown():
+            a = np.array([1.0, 2.1, 3.2, 4.3, 5.4, 6.5], dtype=np.float32)
+            pub.publish(a)
+            r.sleep()
 
+
+    talker()
 
     ##################
     # rospy.init_node("lab1_robot_interface")
@@ -150,7 +168,7 @@ if __name__ == "__main__":
     # topic = 'chatter'
     # pub = rospy.Publisher(topic, String)
     # rospy.init_node('talker', anonymous=True)
-    rospy.loginfo("I will publish to the topic %s")
+    # rospy.loginfo("I will publish to the topic %s")
     # while not rospy.is_shutdown():
     #     str = "hello world %s" % rospy.get_time()
     #     # str = self.map
@@ -158,5 +176,4 @@ if __name__ == "__main__":
     #     pub.publish(str)
     #     rospy.sleep(0.1)
 
-    rospy.spin()
     ##################
