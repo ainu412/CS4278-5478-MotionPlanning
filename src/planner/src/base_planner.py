@@ -83,7 +83,9 @@ class Planner:
         ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
         # print out self.map to see what the data format is like
         # int8[] array
-        print('aug map', len(self.aug_map))
+        print('aug map 0-100', self.aug_map[:100])
+        print('aug map 100-200', self.aug_map[100:200])
+        print('aug map 200-300', self.aug_map[200:300])
         # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
         nei_relative_position = []
         def euclidean_distance_to_center(x, y):
@@ -103,16 +105,14 @@ class Planner:
         #                          [0, -2], [0, -1], [0, 1], [0, 2],
         #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
         #                          [-2, -1], [-2, 0], [-2, 1]]
-        grid_width = int(self.world_width // self.resolution)
-        grid_height = int(self.world_height // self.resolution)
-        for x in range(grid_width):
-            for y in range(grid_height):
+        for x in range(self.world_width):
+            for y in range(self.world_height):
                 # get neighbor position
                 for nei_relative_x, nei_relative_y in nei_relative_position:
                     nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
                     # if neighboring node not within map boundary, then skip
-                    if not (0 <= nei_x < grid_width
-                            and 0 <= nei_y < grid_height):
+                    if not (0 <= nei_x < self.world_width
+                            and 0 <= nei_y < self.world_height):
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
                     self.aug_map = max(self.aug_map[x][y], self.aug_map[nei_x][nei_y])
@@ -185,8 +185,8 @@ class Planner:
                 nei_x = next_relative_x + current_x
                 nei_y = next_relative_y + current_y
                 # make sure next x, y is within boundary and occupancy rate is below 100
-                if not (0 <= nei_x < self.world_width / self.resolution
-                        and 0 <= nei_y < self.world_height / self.resolution):
+                if not (0 <= nei_x < self.world_width
+                        and 0 <= nei_y < self.world_height):
                     continue
                 if self.collision_checker(nei_x, nei_y) >= 100:
                     continue
@@ -297,8 +297,8 @@ class Planner:
 
                 tmp_nei_g_score = g_score[(current_x, current_y)] + v / w * abs(nei_theta - current_theta)
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
-                nei_x_grid_index = nei_x // resolution
-                nei_y_grid_index = nei_y // resolution
+                nei_x_grid_index = int(nei_x)
+                nei_y_grid_index = int(nei_y)
 
                 if tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)] \
                         or (nei_x_grid_index, nei_y_grid_index) not in f_score:
