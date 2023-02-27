@@ -103,15 +103,16 @@ class Planner:
         #                          [0, -2], [0, -1], [0, 1], [0, 2],
         #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
         #                          [-2, -1], [-2, 0], [-2, 1]]
-
-        for x in range(self.world_width // self.resolution):
-            for y in range(self.world_height // self.resolution):
+        grid_width = int(self.world_width // self.resolution)
+        grid_height = int(self.world_height // self.resolution)
+        for x in range(grid_width):
+            for y in range(grid_height):
                 # get neighbor position
                 for nei_relative_x, nei_relative_y in nei_relative_position:
                     nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
                     # if neighboring node not within map boundary, then skip
-                    if not (0 <= nei_x < self.world_width / self.resolution
-                            and 0 <= nei_y < self.world_height / self.resolution):
+                    if not (0 <= nei_x < grid_width
+                            and 0 <= nei_y < grid_height):
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
                     self.aug_map = max(self.aug_map[x][y], self.aug_map[nei_x][nei_y])
