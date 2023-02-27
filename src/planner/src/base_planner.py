@@ -86,6 +86,7 @@ class Planner:
         print('aug map 0-100', self.aug_map[:100])
         print('aug map 100-200', self.aug_map[100:200])
         print('aug map 200-300', self.aug_map[200:300])
+        print('aug map 1000-1100', self.aug_map[1000:1100])
         # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
         nei_relative_position = []
         def euclidean_distance_to_center(x, y):
