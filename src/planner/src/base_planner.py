@@ -104,8 +104,8 @@ class Planner:
         #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
         #                          [-2, -1], [-2, 0], [-2, 1]]
 
-        for x in range(self.world_width / self.resolution):
-            for y in range(self.world_height / self.resolution):
+        for x in range(self.world_width // self.resolution):
+            for y in range(self.world_height // self.resolution):
                 # get neighbor position
                 for nei_relative_x, nei_relative_y in nei_relative_position:
                     nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
@@ -315,6 +315,8 @@ class Planner:
 
         self.action_seq.reverse()
 
+
+        ### for DSPA
         ########### save action table for DSPA
 
 
