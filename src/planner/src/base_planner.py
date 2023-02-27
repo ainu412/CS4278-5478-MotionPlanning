@@ -80,16 +80,8 @@ class Planner:
 
         # TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
         # print out self.map to see what the data format is like
-        topic = 'chatter'
-        pub = rospy.Publisher(topic, String)
-        rospy.init_node('talker', anonymous=True)
-        rospy.loginfo("I will publish to the topic %s", topic)
-        while not rospy.is_shutdown():
-            str = "hello world %s" % rospy.get_time()
-            # str = self.map
-            rospy.loginfo(str)
-            pub.publish(str)
-            rospy.sleep(0.1)
+
+
 
 
         # you should inflate the map to get self.aug_map
@@ -366,6 +358,25 @@ if __name__ == "__main__":
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_discrete_state())
+
+
+    ##################
+    # rospy.init_node("lab1_robot_interface")
+    # interface = Lab1Interface()
+    # rospy.loginfo("Robot action interface ready!")
+    topic = 'chatter'
+    pub = rospy.Publisher(topic, String)
+    rospy.init_node('talker', anonymous=True)
+    rospy.loginfo("I will publish to the topic %s", topic)
+    while not rospy.is_shutdown():
+        str = "hello world %s" % rospy.get_time()
+        # str = self.map
+        rospy.loginfo(str)
+        pub.publish(str)
+        rospy.sleep(0.1)
+
+
+    ##################
 
     # Let's try executing a hard-coded motion plan!
     # Forward! Forward! Turn left!
