@@ -213,7 +213,7 @@ class Planner:
         self.action_seq = []
         cur_x, cur_y, cur_ori = init_pose
         cur_step = 0
-        while cur_step < len(path_seq) - 1:  # 没到终点，至少还要再走一步
+        while cur_step < len(path_seq) - 1:  # hasn't arrived at goal, needs one more step
             next_x, next_y = path_seq[cur_step + 1]
             ## forward action
             if (cur_ori == 0 and (next_x - cur_x, next_y - cur_y) == (1, 0)) \
