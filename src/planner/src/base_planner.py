@@ -79,6 +79,18 @@ class Planner:
         self.map = occupancy_grid.data
 
         # TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
+        # print out self.map to see what the data format is like
+        topic = 'chatter'
+        pub = rospy.Publisher(topic, String)
+        rospy.init_node('talker', anonymous=True)
+        rospy.loginfo("I will publish to the topic %s", topic)
+        while not rospy.is_shutdown():
+            str = "hello world %s" % rospy.get_time()
+            # str = self.map
+            rospy.loginfo(str)
+            pub.publish(str)
+            rospy.sleep(0.1)
+
 
         # you should inflate the map to get self.aug_map
         self.aug_map = copy.deepcopy(self.map)
