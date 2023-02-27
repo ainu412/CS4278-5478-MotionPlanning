@@ -140,3 +140,23 @@ if __name__ == "__main__":
     interface = Lab1Interface()
     rospy.loginfo("Robot action interface ready!")
     rospy.spin()
+
+
+
+    ##################
+    # rospy.init_node("lab1_robot_interface")
+    # interface = Lab1Interface()
+    # rospy.loginfo("Robot action interface ready!")
+    topic = 'chatter'
+    pub = rospy.Publisher(topic, String)
+    rospy.init_node('talker', anonymous=True)
+    rospy.loginfo("I will publish to the topic %s", topic)
+    while not rospy.is_shutdown():
+        str = "hello world %s" % rospy.get_time()
+        # str = self.map
+        rospy.loginfo(str)
+        pub.publish(str)
+        rospy.sleep(0.1)
+
+
+    ##################
