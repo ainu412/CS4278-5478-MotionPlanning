@@ -375,7 +375,6 @@ if __name__ == "__main__":
     #     pub.publish(str)
     #     rospy.sleep(0.1)
     #
-    #
     # ##################
 
     # Let's try executing a hard-coded motion plan!
