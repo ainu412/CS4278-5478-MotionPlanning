@@ -83,7 +83,7 @@ class Planner:
         ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
         # print out self.map to see what the data format is like
         # int8[] array
-        print('aug map', self.aug_map)
+        print('aug map', len(self.aug_map))
         # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
         nei_relative_position = []
         def euclidean_distance_to_center(x, y):
