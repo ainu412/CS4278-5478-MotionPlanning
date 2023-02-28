@@ -633,6 +633,8 @@ class CSDAPlanner(Planner):
 
                 nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
                 # make sure next x, y is within boundary and occupancy rate is below 100
+                print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
+
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
                     continue
@@ -646,13 +648,20 @@ class CSDAPlanner(Planner):
                 nei_x_grid_index = int(nei_x)
                 nei_y_grid_index = int(nei_y)
 
+                print(0)
+                print('tmp_nei_g_score, ', tmp_nei_g_score,
+                      'tmp_nei_f_score, ', tmp_nei_f_score,
+                      'f_score[(nei_x_grid_index, nei_y_grid_index)]', f_score[(nei_x_grid_index, nei_y_grid_index)])
+
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
+                    print(1)
                     g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
                     f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
+
 
             if i < 2:
                 i += 1
