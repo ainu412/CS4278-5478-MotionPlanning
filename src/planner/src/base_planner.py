@@ -83,24 +83,6 @@ class Planner:
         ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
         # print out self.map to see what the data format is like
         # int8[] array
-        print('aug map 0-100', self.aug_map[:100])
-        print('aug map 100-200', self.aug_map[100:200])
-        print('aug map 200-300', self.aug_map[200:300])
-        print('aug map 1000-1100', self.aug_map[1000:1100])
-
-        def xy_to_1d_grid_index(x, y):
-            return y * self.world_width + x
-
-        # index = 1006,
-        # x = 6, y = 5
-        # expected: self.aug_map[1006]=1
-        x = 6
-        y = 5
-        print('x', x, 'y', y)
-        print('1d grid index', xy_to_1d_grid_index(x, y))
-        print('expected augmap[index]', self.aug_map[1006])
-        print('real augmap[index]', self.aug_map[xy_to_1d_grid_index(x, y)])
-
         # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
         nei_relative_position = []
         def euclidean_distance_to_center(x, y):
@@ -131,10 +113,14 @@ class Planner:
                             and 0 <= nei_y < self.world_height):
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
-                    self.aug_map = max(self.aug_map[x][y], self.aug_map[nei_x][nei_y])
+                    self.aug_map = max(self.aug_map[self.xy_to_1d_grid_index(x, y)],
+                                       self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)])
 
 
         ###################################<- end of FILL ME
+
+    def xy_to_1d_grid_index(self, x, y):
+        return y * self.world_width + x
 
     def _get_goal_position(self):
         goal_position = self.goal.pose.position
@@ -353,7 +339,7 @@ class Planner:
             bool -- True for collision, False for non-collision
         """
         if (0 <= x < self.world_width / self.resolution and 0 <= y < self.world_height / self.resolution) \
-            and self.aug_map[x][y] == 100:
+            and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100:
             return True
         return False
 
