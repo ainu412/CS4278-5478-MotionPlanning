@@ -448,19 +448,22 @@ class CSDAPlanner(Planner):
         ## How to compute this?
         def h_euclidean(x1, y1):
             x2, y2 = self._get_goal_position()
-            return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+            return np.sqrt((x1 - x2 / self.resolution) ** 2 + (y1 - y2 / self.resolution) ** 2)
 
         def pose_is_close_to_goal(x, y):
             return math.sqrt((x * resolution - self._get_goal_position()[0]) ** 2
                              + (y * resolution - self._get_goal_position()[1]) ** 2) < 0.3
 
         init_x_unit, init_y_unit, init_theta = init_pose
-        g_score = {(init_x_unit, init_y_unit): 0}
-        f_score = {(init_x_unit, init_y_unit): 0 + h_euclidean(init_x_unit, init_y_unit)}
+
 
         from Queue import PriorityQueue
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
         init_x, init_y = init_x_unit / self.resolution, init_y_unit / self.resolution
+
+        g_score = {(init_x_unit, init_y_unit): 0}
+        f_score = {(init_x_unit, init_y_unit): 0 + h_euclidean(init_x, init_y)}
+
         frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x, init_y, init_theta)))
 
         path_parent = dict()
