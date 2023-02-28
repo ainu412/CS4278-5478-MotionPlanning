@@ -457,7 +457,7 @@ class DSDAPlanner(Planner):
 
         path_parent = dict()
 
-        while frontier.not_empty:
+        while not frontier.empty():
             current_f, (current_x_unit, current_y_unit) = frontier.get()
             print('current_f, (current_x_unit, current_y_unit)', current_f, (current_x_unit, current_y_unit))
             if (current_x_unit, current_y_unit) == self._get_goal_position():
@@ -483,8 +483,9 @@ class DSDAPlanner(Planner):
                     frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
                     path_parent[(nei_x_unit, nei_y_unit)] = (current_x_unit, current_y_unit)
 
-                print('frontier', frontier.queue)
-                
+                if not frontier.empty():
+                    print('frontier', frontier.queue)
+
         # get current path
         path_seq_rev = [self._get_goal_position()]
         cur_x, cur_y = self._get_goal_position()
