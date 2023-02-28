@@ -454,7 +454,8 @@ class DSDAPlanner(Planner):
 
         path_seq_rev.reverse()
         path_seq = path_seq_rev
-
+        print('path_seq', path_seq)
+        
         # get action sequence
         self.action_seq = []
         cur_x, cur_y, cur_ori = init_pose
