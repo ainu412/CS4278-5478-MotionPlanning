@@ -818,24 +818,16 @@ if __name__ == "__main__":
 
     inflation_ratio = 3  # TODO: You should change this value accordingly
 
-    ############# choose different planner
-    planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
-    planner.set_goal(goal[0], goal[1])
-    if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
-    print('action sequence', planner.action_seq)
-    robot.publish_discrete_control(planner.action_seq, goal)
-
-    # planner = CSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     #############
 
-    # planner.set_goal(goal[0], goal[1])
-    # if planner.goal is not None:
-    #     # planner.generate_plan((1, 1, 0))
-    #     planner.generate_plan(robot.get_current_discrete_state())
-    #
-    # print('action sequence', planner.action_seq)
-    # robot.publish_continuous_control(planner.action_seq, goal)
+    planner.set_goal(goal[0], goal[1])
+    if planner.goal is not None:
+        # planner.generate_plan((1, 1, 0))
+        planner.generate_plan(robot.get_current_discrete_state())
+
+    print('action sequence', planner.action_seq)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
