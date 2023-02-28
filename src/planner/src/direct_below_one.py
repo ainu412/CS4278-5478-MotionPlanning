@@ -445,6 +445,9 @@ class CSDAPlanner(Planner):
         ### for DSPA
         ########### save action table for DSPA
 
+    def xy_to_1d_grid_index(self, x, y):
+        return y * self.world_width + x
+    
     def collision_checker(self, x, y):
         """TODO: FILL ME!
         You should implement the collision checker.
