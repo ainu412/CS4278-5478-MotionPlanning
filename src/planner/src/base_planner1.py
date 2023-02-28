@@ -411,7 +411,7 @@ class DSDAPlanner(Planner):
             x2, y2 = self._get_goal_position()
             return abs(x1 - x2) + abs(y1 - y2)
 
-        from queue import PriorityQueue
+        from Queue import PriorityQueue
         init_x, init_y, init_theta = init_pose
         frontier = PriorityQueue()
         frontier.put((0, (init_x, init_y, init_theta)))  # cost to come, priority queue: point location (x, y, theta)
