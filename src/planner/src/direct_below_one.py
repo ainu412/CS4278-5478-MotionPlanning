@@ -403,6 +403,7 @@ class CSDAPlanner(Planner):
                 if nei_pose is None:
                     continue
 
+                nei_x, nei_y, nei_theta = nei_pose
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
 
