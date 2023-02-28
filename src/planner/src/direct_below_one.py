@@ -404,7 +404,7 @@ class CSDAPlanner(Planner):
 
                 nei_x, nei_y, nei_theta = nei_pose
                 # make sure next x, y is within boundary and occupancy rate is below 100
-                print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
+                print('nei_x, nei_y, nei_theta, collision', nei_x, nei_y, nei_theta, self.collision_checker(nei_x, nei_y))
 
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
@@ -418,12 +418,12 @@ class CSDAPlanner(Planner):
                     v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
 
-                print(0)
+                # print(0)
 
 
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
-                    print(1)
+                    # print(1)
                     g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
                     f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
