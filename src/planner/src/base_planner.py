@@ -117,9 +117,8 @@ class Planner:
                     print('self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)]', self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)])
                     nei_val = self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)]
                     center_val = self.aug_map[self.xy_to_1d_grid_index(x, y)]
-                    
+
                     self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = max(nei_val, center_val)
-                                       )
 
 
         ###################################<- end of FILL ME
