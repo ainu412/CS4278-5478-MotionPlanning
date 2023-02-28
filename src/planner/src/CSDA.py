@@ -490,7 +490,11 @@ class CSDAPlanner(Planner):
                 v = 1 / self.resolution
                 # w = np.random.uniform(-pi, pi)
 
-                nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
+                nei_pose = self.motion_predict(current_x, current_y, current_theta, v, w)
+                if nei_pose is None:
+                    continue
+                    
+                nei_x, nei_y, nei_theta = nei_pose
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 if not (0 <= nei_x < self.world_width

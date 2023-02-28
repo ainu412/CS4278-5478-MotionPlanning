@@ -162,9 +162,11 @@ class Planner:
             tuple -- next x, y, theta; return None if has collision
         """
         num_steps = int(dt * frequency)
+        print('num_steps', num_steps)
         dx = 0
         dy = 0
         for i in range(num_steps):
+            print(2)
             if w != 0:
                 dx = - v / w * np.sin(theta) + v / w * \
                      np.sin(theta + w / frequency)
@@ -398,7 +400,7 @@ class CSDAPlanner(Planner):
 
                 print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
                 nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
-                
+
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
 
