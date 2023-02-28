@@ -607,7 +607,7 @@ class CSDAPlanner(Planner):
             return math.sqrt((x - self._get_goal_position()[0]) ** 2
                              + (y - self._get_goal_position()[1]) ** 2) < 0.3
 
-        grid_resolution = 0.25
+        grid_resolution = 0.1
 
         def loc_to_grid_index(x, y):
             return int(x / grid_resolution), int(y / grid_resolution)
