@@ -370,6 +370,8 @@ class CSDAPlanner(Planner):
         def loc_to_grid_index(x, y):
             return int(x / grid_resolution), int(y / grid_resolution)
 
+
+
         init_x, init_y, init_theta = init_pose
         g_score = {loc_to_grid_index(init_x, init_y): 0}
         f_score = {loc_to_grid_index(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
@@ -451,8 +453,12 @@ class CSDAPlanner(Planner):
     def xy_to_1d_grid_index(self, x, y):
         return y * self.world_width + x
 
+    def unit_to_world(self, x_unit, y_unit):
+        return int(x_unit / self.resolution), int(y_unit / self.resolution)
+
     def collision_checker(self, x, y):
         """TODO: FILL ME!
+        unit collision checker
         You should implement the collision checker.
         Hint: you should consider the augmented map and the world size
 
@@ -467,6 +473,7 @@ class CSDAPlanner(Planner):
         # print('x', x, 'y', 'y')
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
+        x, y = self.unit_to_world(x, y)
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
