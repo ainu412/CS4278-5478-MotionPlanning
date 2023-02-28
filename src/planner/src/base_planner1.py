@@ -453,7 +453,7 @@ class DSDAPlanner(Planner):
         f_score = {(init_x_unit, init_y_unit): 0 + h_manhattan(init_x_unit, init_y_unit)}
 
         frontier = PriorityQueue()
-        frontier.put((f_score(init_x_unit, init_y_unit), (init_x_unit, init_y_unit)))
+        frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x_unit, init_y_unit)))
 
         path_parent = dict()
 
