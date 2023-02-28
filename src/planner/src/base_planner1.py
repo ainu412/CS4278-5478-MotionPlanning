@@ -448,11 +448,13 @@ class DSDAPlanner(Planner):
 
         from Queue import PriorityQueue
         init_x_unit, init_y_unit, init_theta = init_pose
-        frontier = PriorityQueue()
-        frontier.put((0, (init_x_unit, init_y_unit)))  # cost to come, priority queue: point location (x, y, theta)
 
         g_score = {(init_x_unit, init_y_unit): 0}
-        f_score = {(init_x_unit, init_y_unit): h_manhattan(init_x_unit, init_y_unit)}
+        f_score = {(init_x_unit, init_y_unit): 0 + h_manhattan(init_x_unit, init_y_unit)}
+
+        frontier = PriorityQueue()
+        frontier.put((f_score(init_x_unit, init_y_unit), (init_x_unit, init_y_unit)))
+
         path_parent = dict()
 
         while frontier.not_empty:
