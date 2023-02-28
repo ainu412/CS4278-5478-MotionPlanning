@@ -628,7 +628,7 @@ class CSDAPlanner(Planner):
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
                     continue
-                if self.collision_checker(nei_x, nei_y) >= 100:
+                if self.collision_checker(nei_x, nei_y):
                     continue
 
                 cur_x_grid_index = int(current_x)
