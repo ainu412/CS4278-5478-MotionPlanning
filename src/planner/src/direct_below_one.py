@@ -607,18 +607,23 @@ class CSDAPlanner(Planner):
             return math.sqrt((x - self._get_goal_position()[0]) ** 2
                              + (y - self._get_goal_position()[1]) ** 2) < 0.3
 
+        grid_resolution = 0.25
+
+        def loc_to_grid_index(x, y):
+            return int(x / grid_resolution), int(y / grid_resolution)
+
         init_x, init_y, init_theta = init_pose
-        g_score = {(init_x, init_y): 0}
-        f_score = {(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
+        g_score = {loc_to_grid_index(init_x, init_y): 0}
+        f_score = {loc_to_grid_index(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
 
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
-        frontier.put((f_score[(init_x, init_y)], (init_x, init_y, init_theta)))
+        frontier.put((f_score[loc_to_grid_index(init_x, init_y)], (init_x, init_y, init_theta)))
 
         path_parent = dict()
         path_control_from_parent = dict()
 
         current_x, current_y, current_theta = 1, 1, 0  # dummy initialization
-        i = 0
+
         while not frontier.empty():
             current_f, (current_x, current_y, current_theta) = frontier.get()
 
@@ -641,20 +646,18 @@ class CSDAPlanner(Planner):
                 if self.collision_checker(nei_x, nei_y):
                     continue
 
-                grid_resolution = 0.25
-
-                cur_x_grid_index = int(current_x / grid_resolution)
-                cur_y_grid_index = int(current_y / grid_resolution)
-                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + abs(v / w * (nei_theta - current_theta))
+                cur_x_grid_index, cur_y_grid_index = loc_to_grid_index(current_x, current_y)
+                nei_x_grid_index, nei_y_grid_index = loc_to_grid_index(nei_x, nei_y)
+                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + abs(
+                    v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
-                nei_x_grid_index = int(nei_x / grid_resolution)
-                nei_y_grid_index = int(nei_y / grid_resolution)
 
                 print(0)
                 print('tmp_nei_g_score, ', tmp_nei_g_score,
                       'tmp_nei_f_score, ', tmp_nei_f_score,
                       'f_score[(nei_x_grid_index, nei_y_grid_index)]',
-                      f_score[(nei_x_grid_index, nei_y_grid_index)] if (nei_x_grid_index, nei_y_grid_index) in f_score else '')
+                      f_score[(nei_x_grid_index, nei_y_grid_index)] if (nei_x_grid_index,
+                                                                        nei_y_grid_index) in f_score else '')
 
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
@@ -664,7 +667,6 @@ class CSDAPlanner(Planner):
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
-
 
             # if i < 2:
             #     i += 1
