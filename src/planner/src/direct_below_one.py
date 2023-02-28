@@ -370,45 +370,7 @@ class CSDAPlanner(Planner):
         def loc_to_grid_index(x, y):
             return int(x / grid_resolution), int(y / grid_resolution)
 
-        def motion_predict(x, y, theta, v, w, dt=0.5, frequency=10):
-            """Predict the next pose of the robot given controls. Returns None if
-            the robot collide with the wall.
 
-            The robot dynamics is provided in the assignment description.
-
-            Arguments:
-                x {float} -- current x of robot
-                y {float} -- current y of robot
-                theta {float} -- current theta of robot
-                v {float} -- linear velocity
-                w {float} -- angular velocity
-
-            Keyword Arguments:
-                dt {float} -- time interval. DO NOT CHANGE (default: {0.5})
-                frequency {int} -- simulation frequency. DO NOT CHANGE (default: {10})
-
-            Returns:
-                tuple -- next x, y, theta; return None if has collision
-            """
-            num_steps = int(dt * frequency)
-            dx = 0
-            dy = 0
-            for i in range(num_steps):
-                if w != 0:
-                    dx = - v / w * np.sin(theta) + v / w * \
-                         np.sin(theta + w / frequency)
-                    dy = v / w * np.cos(theta) - v / w * \
-                         np.cos(theta + w / frequency)
-                else:
-                    dx = v * np.cos(theta) / frequency
-                    dy = v * np.sin(theta) / frequency
-                x += dx
-                y += dy
-
-                if self.collision_checker(x, y):
-                    return None
-                theta += w / frequency
-            return x, y, theta
 
         init_x, init_y, init_theta = init_pose
         g_score = {loc_to_grid_index(init_x, init_y): 0}
@@ -434,7 +396,8 @@ class CSDAPlanner(Planner):
                 v = np.random.uniform(0, 1)
                 w = np.random.uniform(-pi, pi)
 
-                nei_x, nei_y, nei_theta = motion_predict(current_x, current_y, current_theta, v, w)
+                nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
+                print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
 
