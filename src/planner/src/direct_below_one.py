@@ -370,7 +370,7 @@ class CSDAPlanner(Planner):
         def loc_to_grid_index(x, y):
             return int(x / grid_resolution), int(y / grid_resolution)
 
-        def motion_predict(self, x, y, theta, v, w, dt=0.5, frequency=10):
+        def motion_predict(x, y, theta, v, w, dt=0.5, frequency=10):
             """Predict the next pose of the robot given controls. Returns None if
             the robot collide with the wall.
 
@@ -434,7 +434,7 @@ class CSDAPlanner(Planner):
                 v = np.random.uniform(0, 1)
                 w = np.random.uniform(-pi, pi)
 
-                nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
+                nei_x, nei_y, nei_theta = motion_predict(current_x, current_y, current_theta, v, w)
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
 
