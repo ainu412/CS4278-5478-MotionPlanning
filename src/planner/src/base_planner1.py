@@ -627,10 +627,10 @@ class DSDAPlanner(Planner):
         Returns:
             bool -- True for collision, False for non-collision
         """
-        print('augmap[400:600]', self.aug_map[400:600])
-        print('x', x, 'y', 'y')
-        print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
-        print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
+        # print('augmap[400:600]', self.aug_map[400:600])
+        # print('x', x, 'y', 'y')
+        # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
+        # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
