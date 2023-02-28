@@ -402,7 +402,7 @@ class DSDAPlanner(Planner):
             for y in range(self.world_height):
                 if not self.collision_checker(x, y):
                     continue
-                
+
                 # get neighbor position
                 for nei_relative_x, nei_relative_y in nei_relative_position:
                     nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
@@ -662,9 +662,9 @@ if __name__ == "__main__":
     robot = RobotClient()
     inflation_ratio = 3  # TODO: You should change this value accordingly
     planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
-    planner.set_goal(goal[0], goal[1])
-    if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
+    # planner.set_goal(goal[0], goal[1])
+    # if planner.goal is not None:
+    #     planner.generate_plan(robot.get_current_discrete_state())
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
