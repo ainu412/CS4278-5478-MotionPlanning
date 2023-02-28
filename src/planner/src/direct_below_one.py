@@ -652,7 +652,7 @@ class CSDAPlanner(Planner):
                 print('tmp_nei_g_score, ', tmp_nei_g_score,
                       'tmp_nei_f_score, ', tmp_nei_f_score,
                       'f_score[(nei_x_grid_index, nei_y_grid_index)]',
-                      f_score[(nei_x_grid_index, nei_y_grid_index)] if (nei_x_grid_index, nei_y_grid_index) in f_score)
+                      f_score[(nei_x_grid_index, nei_y_grid_index)] if (nei_x_grid_index, nei_y_grid_index) in f_score else '')
 
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
