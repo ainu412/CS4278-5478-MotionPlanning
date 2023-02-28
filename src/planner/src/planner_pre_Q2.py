@@ -478,24 +478,21 @@ class DSDAPlanner(Planner):
                 if not (0 <= nei_x_unit < self.unit_width
                         and 0 <= nei_y_unit < self.unit_height):
                     continue
-                print('0')
+
                 if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
                     continue
 
                 tmp_nei_g_score = g_score.get((current_x_unit, current_y_unit)) + 1
                 tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x_unit, nei_y_unit)
 
-                print('1')
+
 
                 if (nei_x_unit, nei_y_unit) not in f_score or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
-                    print('2')
                     g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
                     f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
                     path_parent[(nei_x_unit, nei_y_unit)] = (current_x_unit, current_y_unit)
 
-                if not frontier.empty():
-                    print('frontier', frontier.queue)
 
         # get current path
         path_seq_rev = [self._get_goal_position()]
@@ -576,7 +573,7 @@ class DSDAPlanner(Planner):
                and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
 
-class CSDAPlanner(DSDAPlanner):
+class CSDAPlanner(Planner):
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
         an initial pose and a goal pose.
