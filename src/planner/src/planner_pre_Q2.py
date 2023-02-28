@@ -350,7 +350,7 @@ class DSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
-        super().__init__(world_width, world_height, world_resolution, inflation_ratio)
+        super(Planner, self).__init__(world_width, world_height, world_resolution, inflation_ratio)
 
         ######### ->newly added for DSDAPlanner
         self.unit_width = int(world_width * world_resolution)
@@ -577,7 +577,7 @@ class CSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
-        super().__init__(world_width, world_height, world_resolution, inflation_ratio)
+        super(Planner, self).__init__(world_width, world_height, world_resolution, inflation_ratio)
 
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
