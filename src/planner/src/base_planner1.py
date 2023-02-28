@@ -400,6 +400,9 @@ class DSDAPlanner(Planner):
 
         for x in range(self.world_width):
             for y in range(self.world_height):
+                if not self.collision_checker(x, y):
+                    continue
+                
                 # get neighbor position
                 for nei_relative_x, nei_relative_y in nei_relative_position:
                     nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
