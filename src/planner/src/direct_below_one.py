@@ -398,8 +398,10 @@ class CSDAPlanner(Planner):
                 v = np.random.uniform(0, 1)
                 w = np.random.uniform(-pi, pi)
 
-                print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
-                nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
+                # print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
+                nei_pose = self.motion_predict(current_x, current_y, current_theta, v, w)
+                if nei_pose is None:
+                    continue
 
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)

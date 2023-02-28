@@ -493,7 +493,7 @@ class CSDAPlanner(Planner):
                 nei_pose = self.motion_predict(current_x, current_y, current_theta, v, w)
                 if nei_pose is None:
                     continue
-                    
+
                 nei_x, nei_y, nei_theta = nei_pose
                 print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
                 # make sure next x, y is within boundary and occupancy rate is below 100
