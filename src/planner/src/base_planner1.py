@@ -618,7 +618,7 @@ class CSDAPlanner(Planner):
         path_control_from_parent = dict()
 
         current_x, current_y, current_theta = 1, 1, 0  # dummy initialization
-
+        i = 0
         while not frontier.empty():
             current_f, (current_x, current_y, current_theta) = frontier.get()
 
@@ -654,7 +654,11 @@ class CSDAPlanner(Planner):
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
-            print('priority queue', frontier.queue)
+            if i < 10:
+                i += 1
+                print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
+                print('priority queue', frontier.queue)
+
         # get action sequence according to sequence path tree
         self.action_seq = []
         while (current_x, current_y) != (init_x, init_y):
