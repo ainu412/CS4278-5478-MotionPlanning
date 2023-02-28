@@ -84,6 +84,7 @@ class Planner:
         # print out self.map to see what the data format is like
         # int8[] array
         # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
+        self.aug_map = list(self.aug_map)
         nei_relative_position = []
         def euclidean_distance_to_center(x, y):
             return np.round(np.sqrt(x**2 + y**2))
@@ -120,7 +121,7 @@ class Planner:
 
                     self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = max(nei_val, center_val)
 
-
+        self.aug_map = tuple(self.aug_map)
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
