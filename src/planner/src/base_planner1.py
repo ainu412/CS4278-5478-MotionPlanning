@@ -300,7 +300,12 @@ class RobotClient:
 
         Checkout the definitions in planner/msg/ and planner/srv/
         """
-        pass
+        proxy = rospy.ServiceProxy(
+            "/lab1/continuous_action_sequence",
+            ContinuousActionSequenceExec,
+        )
+        plan = [ContinuousAction(action) for action in action_seq]
+        proxy(plan)
         assert self.is_close_to_goal(goal)
 
     def execute_policy(self, action_table, goal):
@@ -688,12 +693,20 @@ if __name__ == "__main__":
 
     ############# choose different planner
     # planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    # planner.set_goal(goal[0], goal[1])
+    # if planner.goal is not None:
+    #     planner.generate_plan(robot.get_current_discrete_state())
+    # print('action sequence', planner.action_seq)
+    # robot.publish_discrete_control(planner.action_seq, goal)
+
     planner = CSDAPlanner(width, height, resolution, inflation_ratio=10)
     #############
 
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_discrete_state())
+    print('action sequence', planner.action_seq)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
@@ -715,7 +728,7 @@ if __name__ == "__main__":
     # Let's try executing a hard-coded motion plan!
     # Forward! Forward! Turn left!
     # You should see an AssertionError since we didn't reach the goal.
-    mock_action_plan = [(0, -1), (0, -1), (1, 0), (1, 0), (0, -1), (0, 1), (0, -1), (1, 0), (1, 0)]
+    # mock_action_plan = [(0, -1), (0, -1), (1, 0), (1, 0), (0, -1), (0, 1), (0, -1), (1, 0), (1, 0)]
 
     print('action sequence', planner.action_seq)
     robot.publish_discrete_control(planner.action_seq, goal)
