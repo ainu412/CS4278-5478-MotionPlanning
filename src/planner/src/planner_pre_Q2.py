@@ -350,12 +350,27 @@ class DSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
-        super(Planner, self).__init__(world_width, world_height, world_resolution, inflation_ratio)
+
 
         ######### ->newly added for DSDAPlanner
         self.unit_width = int(world_width * world_resolution)
         self.unit_height = int(world_height * world_resolution)
         ######### <- end of newly added
+
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
+
 
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
@@ -577,7 +592,19 @@ class CSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
-        super(Planner, self).__init__(world_width, world_height, world_resolution, inflation_ratio)
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
 
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
