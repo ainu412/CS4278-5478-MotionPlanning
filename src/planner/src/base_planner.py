@@ -113,7 +113,8 @@ class Planner:
                             and 0 <= nei_y < self.world_height):
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
-                    self.aug_map = max(self.aug_map[self.xy_to_1d_grid_index(x, y)],
+                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] \
+                        = max(self.aug_map[self.xy_to_1d_grid_index(x, y)],
                                        self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)])
 
 
