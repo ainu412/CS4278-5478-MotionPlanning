@@ -474,10 +474,13 @@ class DSDAPlanner(Planner):
                 if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
                     continue
 
-                tmp_nei_g_score = g_score[(current_x_unit, current_y_unit)] + 1
+                tmp_nei_g_score = g_score.get((current_x_unit, current_y_unit)) + 1
                 tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x_unit, nei_y_unit)
 
+                print('1')
+
                 if (nei_x_unit, nei_y_unit) not in f_score or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
+                    print('2')
                     g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
                     f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
