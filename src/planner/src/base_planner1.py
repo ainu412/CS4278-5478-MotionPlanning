@@ -439,7 +439,7 @@ class DSDAPlanner(Planner):
                 tmp_nei_g_score = g_score[(current_x, current_y)] + 1
                 tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x, nei_y)
 
-                if tmp_nei_f_score < f_score[(nei_x, nei_y)] or (nei_x, nei_y) not in f_score:
+                if (nei_x, nei_y) not in f_score or tmp_nei_f_score < f_score[(nei_x, nei_y)]:
                     g_score[(nei_x, nei_y)] = tmp_nei_g_score
                     f_score[(nei_x, nei_y)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y)))
