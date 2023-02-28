@@ -416,7 +416,7 @@ class DSDAPlanner(Planner):
         self.aug_map = tuple(self.aug_map)
 
         for i in range(200):
-            print(f'augmap {200*i} to {200*(i+1)}', self.aug_map[200*i:200*i+200])
+            print(f"augmap {200*i} to {200*(i+1)}", self.aug_map[200*i:200*i+200])
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
