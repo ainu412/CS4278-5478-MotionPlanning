@@ -573,10 +573,10 @@ class DSDAPlanner(Planner):
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
+               and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
 
-class CSDAPlanner(Planner):
+class CSDAPlanner(DSDAPlanner):
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
         an initial pose and a goal pose.
@@ -604,25 +604,33 @@ class CSDAPlanner(Planner):
             return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
         def pose_is_close_to_goal(x, y):
-            return math.sqrt((x - self._get_goal_position()[0]) ** 2
-                             + (y - self._get_goal_position()[1]) ** 2) < 0.3
+            return math.sqrt((x * resolution - self._get_goal_position()[0]) ** 2
+                             + (y * resolution - self._get_goal_position()[1]) ** 2) < 0.3
 
-        init_x, init_y, init_theta = init_pose
-        g_score = {(init_x, init_y): 0}
-        f_score = {(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
+        init_x_unit, init_y_unit, init_theta = init_pose
+        g_score = {(init_x_unit, init_y_unit): 0}
+        f_score = {(init_x_unit, init_y_unit): 0 + h_euclidean(init_x_unit, init_y_unit)}
 
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
-        frontier.put((f_score[(init_x, init_y)], (init_x, init_y, init_theta)))
+        init_x, init_y = init_x_unit / self.resolution, init_y_unit / self.resolution
+        frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x, init_y, init_theta)))
 
         path_parent = dict()
         path_control_from_parent = dict()
 
-        current_x, current_y, current_theta = 1, 1, 0  # dummy initialization
+        def loc_to_unit(x):
+            return int(x * self.resolution)
+
+        # current_x_unit, current_y_unit, current_theta = 1, 1, 0  # dummy initialization
+        # current_x_unit, current_y_unit, current_theta = 1, 1, 0  # dummy initialization
         i = 0
+
         while not frontier.empty():
             current_f, (current_x, current_y, current_theta) = frontier.get()
 
-            if pose_is_close_to_goal(current_x, current_y):
+            current_x_unit, current_y_unit = loc_to_unit(current_x), loc_to_unit(current_y)
+
+            if pose_is_close_to_goal(current_x_unit, current_y_unit):
                 break
 
             for w in np.linspace(-pi, pi, 10):
@@ -639,31 +647,29 @@ class CSDAPlanner(Planner):
                 if self.collision_checker(nei_x, nei_y):
                     continue
 
-                cur_x_grid_index = int(current_x)
-                cur_y_grid_index = int(current_y)
-                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + abs(v / w * (nei_theta - current_theta))
+                tmp_nei_g_score = g_score[(current_x_unit, current_y_unit)] + abs(v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
-                nei_x_grid_index = int(nei_x)
-                nei_y_grid_index = int(nei_y)
+                nei_x_unit, nei_y_unit = loc_to_unit(nei_x), loc_to_unit(nei_y)
 
-                if (nei_x_grid_index, nei_y_grid_index) not in f_score \
-                        or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
-                    g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
-                    f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
+                if (nei_x_unit, nei_y_unit) not in f_score \
+                        or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
+                    g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
+                    f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
             if i < 2:
                 i += 1
-                print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
+                print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x_unit, current_y_unit, current_theta))
                 print('priority queue', frontier.queue)
 
         # get action sequence according to sequence path tree
         self.action_seq = []
-        while (current_x, current_y) != (init_x, init_y):
+        while (current_x_unit, current_y_unit) != (init_x_unit, init_y_unit):
             self.action_seq.append(path_control_from_parent[(current_x, current_y, current_theta)])
             (current_x, current_y, current_theta) = path_parent[(current_x, current_y, current_theta)]
+            current_x_unit, current_y_unit = loc_to_unit(current_x), loc_to_unit(current_y)
 
         self.action_seq.reverse()
 
