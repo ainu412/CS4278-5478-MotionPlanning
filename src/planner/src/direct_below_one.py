@@ -625,7 +625,7 @@ class CSDAPlanner(Planner):
             if pose_is_close_to_goal(current_x, current_y):
                 break
 
-            for w in np.linspace(-pi, pi, 8):
+            for w in np.linspace(-pi, pi, 9):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
                 v = 1
