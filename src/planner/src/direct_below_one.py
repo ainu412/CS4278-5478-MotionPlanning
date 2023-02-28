@@ -447,7 +447,7 @@ class CSDAPlanner(Planner):
 
     def xy_to_1d_grid_index(self, x, y):
         return y * self.world_width + x
-    
+
     def collision_checker(self, x, y):
         """TODO: FILL ME!
         You should implement the collision checker.
@@ -465,7 +465,7 @@ class CSDAPlanner(Planner):
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
+               and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
 if __name__ == "__main__":
     # You can generate and save the plan using the code below
