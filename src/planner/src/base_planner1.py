@@ -468,9 +468,10 @@ class DSDAPlanner(Planner):
                 nei_y_unit = next_relative_y_unit + current_y_unit
                 print('nei_x_unit, nei_y_unit', nei_x_unit, nei_y_unit)
                 # make sure next x, y is within boundary and occupancy rate is below 100
-                if not (0 < nei_x_unit < self.unit_width
-                        and 0 < nei_y_unit < self.unit_height):
+                if not (0 <= nei_x_unit < self.unit_width
+                        and 0 <= nei_y_unit < self.unit_height):
                     continue
+                print('0')
                 if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
                     continue
 
