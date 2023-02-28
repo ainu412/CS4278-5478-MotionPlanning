@@ -617,11 +617,11 @@ class CSDAPlanner(Planner):
             if pose_is_close_to_goal(current_x, current_y):
                 break
 
-            for _ in range(10):
+            for w in np.linspace(-pi, pi, 10):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
                 v = 1
-                w = np.random.uniform(-pi, pi)
+                # w = np.random.uniform(-pi, pi)
 
                 nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
                 # make sure next x, y is within boundary and occupancy rate is below 100
