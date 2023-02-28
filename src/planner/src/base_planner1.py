@@ -326,6 +326,40 @@ class RobotClient:
 
 
 class DSDAPlanner(Planner):
+    def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3):
+        """init function of the base planner. You should develop your own planner
+        using this class as a base.
+
+        For standard mazes, width = 200, height = 200, resolution = 0.05.
+        For COM1 map, width = 2500, height = 983, resolution = 0.02
+
+        Arguments:
+            world_width {int} -- width of map in terms of pixels
+            world_height {int} -- height of map in terms of pixels
+            world_resolution {float} -- resolution of map
+
+        Keyword Arguments:
+            inflation_ratio {int} -- [description] (default: {3})
+        """
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+
+        ######### ->newly added for DSDAPlanner
+        self.unit_width = int(world_width * world_resolution)
+        self.unit_height = int(world_height * world_resolution)
+        ######### <-
+
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
 
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
@@ -350,7 +384,7 @@ class DSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
-                if x == 0 and y == 0:
+                if x == 0 and y == 0: # skip center
                     continue
                 if euclidean_distance_to_center(x, y) <= inflation_ratio:
                     nei_relative_position.append([x, y])
@@ -412,50 +446,50 @@ class DSDAPlanner(Planner):
             return abs(x1 - x2) + abs(y1 - y2)
 
         from Queue import PriorityQueue
-        init_x, init_y, init_theta = init_pose
+        init_x_unit, init_y_unit, init_theta = init_pose
         frontier = PriorityQueue()
-        frontier.put((0, (init_x, init_y)))  # cost to come, priority queue: point location (x, y, theta)
+        frontier.put((0, (init_x_unit, init_y_unit)))  # cost to come, priority queue: point location (x, y, theta)
 
-        g_score = {(init_x, init_y): 0}
-        f_score = {(init_x, init_y): h_manhattan(init_x, init_y)}
+        g_score = {(init_x_unit, init_y_unit): 0}
+        f_score = {(init_x_unit, init_y_unit): h_manhattan(init_x_unit, init_y_unit)}
         path_parent = dict()
 
         while frontier.not_empty:
-            current_f, (current_x, current_y) = frontier.get()
+            current_f, (current_x_unit, current_y_unit) = frontier.get()
 
-            if (current_x, current_y) == self._get_goal_position():
+            if (current_x_unit, current_y_unit) == self._get_goal_position():
                 break
 
-            for next_relative_x, next_relative_y in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
-                nei_x = next_relative_x + current_x
-                nei_y = next_relative_y + current_y
+            for next_relative_x_unit, next_relative_y_unit in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
+                nei_x_unit = next_relative_x_unit + current_x_unit
+                nei_y_unit = next_relative_y_unit + current_y_unit
                 # make sure next x, y is within boundary and occupancy rate is below 100
-                if not (0 <= nei_x < self.world_width
-                        and 0 <= nei_y < self.world_height):
+                if not (0 <= nei_x_unit < self.unit_width
+                        and 0 <= nei_y_unit < self.unit_height):
                     continue
-                if self.collision_checker(nei_x, nei_y) >= 100:
+                if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
                     continue
 
-                tmp_nei_g_score = g_score[(current_x, current_y)] + 1
-                tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x, nei_y)
+                tmp_nei_g_score = g_score[(current_x_unit, current_y_unit)] + 1
+                tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x_unit, nei_y_unit)
 
-                if (nei_x, nei_y) not in f_score or tmp_nei_f_score < f_score[(nei_x, nei_y)]:
-                    g_score[(nei_x, nei_y)] = tmp_nei_g_score
-                    f_score[(nei_x, nei_y)] = tmp_nei_f_score
-                    frontier.put((tmp_nei_f_score, (nei_x, nei_y)))
-                    path_parent[(nei_x, nei_y)] = (current_x, current_y)
+                if (nei_x_unit, nei_y_unit) not in f_score or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
+                    g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
+                    f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
+                    frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
+                    path_parent[(nei_x_unit, nei_y_unit)] = (current_x_unit, current_y_unit)
 
         # get current path
         path_seq_rev = [self._get_goal_position()]
         cur_x, cur_y = self._get_goal_position()
-        while (cur_x, cur_y) != (init_x, init_y):
+        while (cur_x, cur_y) != (init_x_unit, init_y_unit):
             (cur_x, cur_y) = path_parent[(cur_x, cur_y)]
             path_seq_rev.append((cur_x, cur_y))
 
         path_seq_rev.reverse()
         path_seq = path_seq_rev
         print('path_seq', path_seq)
-        
+
         # get action sequence
         self.action_seq = []
         cur_x, cur_y, cur_ori = init_pose
@@ -570,13 +604,13 @@ class DSDAPlanner(Planner):
         Hint: you should consider the augmented map and the world size
 
         Arguments:
-            x {float} -- current x of robot
-            y {float} -- current y of robot
+            x {int} -- current x of robot
+            y {int} -- current y of robot
 
         Returns:
             bool -- True for collision, False for non-collision
         """
-        return (0 <= x < self.world_width / self.resolution and 0 <= y < self.world_height / self.resolution) \
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
 
