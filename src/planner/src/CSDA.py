@@ -458,6 +458,7 @@ class CSDAPlanner(Planner):
         g_score = {(init_x_unit, init_y_unit): 0}
         f_score = {(init_x_unit, init_y_unit): 0 + h_euclidean(init_x_unit, init_y_unit)}
 
+        from Queue import PriorityQueue
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
         init_x, init_y = init_x_unit / self.resolution, init_y_unit / self.resolution
         frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x, init_y, init_theta)))
