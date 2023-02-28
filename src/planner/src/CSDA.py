@@ -487,10 +487,11 @@ class CSDAPlanner(Planner):
             for w in np.linspace(-pi, pi, 10):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
-                v = 1
+                v = 1 / self.resolution
                 # w = np.random.uniform(-pi, pi)
 
                 nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
+                print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
@@ -498,12 +499,15 @@ class CSDAPlanner(Planner):
                 if self.collision_checker(nei_x, nei_y):
                     continue
 
+                print(0)
+
                 tmp_nei_g_score = g_score[(current_x_unit, current_y_unit)] + abs(v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
                 nei_x_unit, nei_y_unit = loc_to_unit(nei_x), loc_to_unit(nei_y)
 
                 if (nei_x_unit, nei_y_unit) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
+                    print(1)
                     g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
                     f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
@@ -513,7 +517,7 @@ class CSDAPlanner(Planner):
             if i < 2:
                 i += 1
                 print('i current_f, (current_x, current_y, current_theta)', current_f,
-                      (current_x_unit, current_y_unit, current_theta))
+                      (current_x, current_y, current_theta))
                 print('priority queue', frontier.queue)
 
         # get action sequence according to sequence path tree
