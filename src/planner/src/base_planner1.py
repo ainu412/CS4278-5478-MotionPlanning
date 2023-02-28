@@ -400,7 +400,7 @@ class DSDAPlanner(Planner):
 
         for x in range(self.world_width):
             for y in range(self.world_height):
-                if not self.collision_checker(x, y):
+                if not self.collision_checker_wrt_original_map(x, y):
                     continue
 
                 # get neighbor position
@@ -411,10 +411,7 @@ class DSDAPlanner(Planner):
                             and 0 <= nei_y < self.world_height):
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
-                    nei_val = self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)]
-                    center_val = self.aug_map[self.xy_to_1d_grid_index(x, y)]
-
-                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = max(nei_val, center_val)
+                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = 100
 
         self.aug_map = tuple(self.aug_map)
 
@@ -614,6 +611,10 @@ class DSDAPlanner(Planner):
 
         ### for DSPA
         ########### save action table for DSPA
+
+    def collision_checker_wrt_original_map(self, x, y):
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
 
     def collision_checker(self, x, y):
         """TODO: FILL ME!
