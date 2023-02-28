@@ -641,7 +641,7 @@ class CSDAPlanner(Planner):
 
                 cur_x_grid_index = int(current_x)
                 cur_y_grid_index = int(current_y)
-                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + v / w * abs(nei_theta - current_theta)
+                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + abs(v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
                 nei_x_grid_index = int(nei_x)
                 nei_y_grid_index = int(nei_y)
