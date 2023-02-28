@@ -162,7 +162,6 @@ class Planner:
             tuple -- next x, y, theta; return None if has collision
         """
         num_steps = int(dt * frequency)
-        print('num_steps', num_steps)
         dx = 0
         dy = 0
         for i in range(num_steps):
@@ -364,7 +363,7 @@ class CSDAPlanner(Planner):
 
         def pose_is_close_to_goal(x, y):
             return math.sqrt((x - self._get_goal_position()[0]) ** 2
-                             + (y - self._get_goal_position()[1]) ** 2) < 0.3
+                             + (y - self._get_goal_position()[1]) ** 2) < 0.2
 
         grid_resolution = 0.1
 
