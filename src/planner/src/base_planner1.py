@@ -483,6 +483,8 @@ class DSDAPlanner(Planner):
                     frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
                     path_parent[(nei_x_unit, nei_y_unit)] = (current_x_unit, current_y_unit)
 
+                print('frontier', frontier.queue)
+                
         # get current path
         path_seq_rev = [self._get_goal_position()]
         cur_x, cur_y = self._get_goal_position()
