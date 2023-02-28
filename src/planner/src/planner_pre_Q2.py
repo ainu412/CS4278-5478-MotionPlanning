@@ -350,6 +350,7 @@ class DSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
+        super().__init__(world_width, world_height, world_resolution, inflation_ratio)
         self.map = None
         self.pose = None
         self.goal = None
@@ -585,6 +586,7 @@ class CSDAPlanner(Planner):
         Keyword Arguments:
             inflation_ratio {int} -- [description] (default: {3})
         """
+        super().__init__(world_width, world_height, world_resolution, inflation_ratio)
         self.map = None
         self.pose = None
         self.goal = None
@@ -825,7 +827,7 @@ if __name__ == "__main__":
     if planner.goal is not None:
         planner.generate_plan((1, 1, 0))
         # planner.generate_plan(robot.get_current_discrete_state())
-        
+
     print('action sequence', planner.action_seq)
     robot.publish_continuous_control(planner.action_seq, goal)
 
