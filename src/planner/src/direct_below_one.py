@@ -671,6 +671,7 @@ class CSDAPlanner(Planner):
 
         print('path_parent', path_parent)
         print('path_control_from_parent', path_control_from_parent)
+        
         # get action sequence according to sequence path tree
         self.action_seq = []
         while (current_x, current_y) != (init_x, init_y):
