@@ -625,7 +625,7 @@ class CSDAPlanner(Planner):
             if pose_is_close_to_goal(current_x, current_y):
                 break
 
-            for w in np.linspace(-pi, pi, 10):
+            for w in np.linspace(-pi, pi, 8):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
                 v = 1
@@ -664,14 +664,14 @@ class CSDAPlanner(Planner):
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
 
-            if i < 2:
-                i += 1
-                print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
-                print('priority queue', frontier.queue)
+            # if i < 2:
+            #     i += 1
+            #     print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
+            #     print('priority queue', frontier.queue)
 
-        print('path_parent', path_parent)
-        print('path_control_from_parent', path_control_from_parent)
-        
+        # print('path_parent', path_parent)
+        # print('path_control_from_parent', path_control_from_parent)
+
         # get action sequence according to sequence path tree
         self.action_seq = []
         while (current_x, current_y) != (init_x, init_y):
