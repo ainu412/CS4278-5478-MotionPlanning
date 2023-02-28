@@ -523,7 +523,7 @@ class CSDAPlanner(Planner):
 
     def collision_checker_wrt_original_map(self, x, y):
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
+               and self.map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
     def collision_checker(self, x, y):
         """TODO: FILL ME!
@@ -542,7 +542,7 @@ class CSDAPlanner(Planner):
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
+               and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
 
 
 if __name__ == "__main__":
