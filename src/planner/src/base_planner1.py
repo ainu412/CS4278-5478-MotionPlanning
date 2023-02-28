@@ -620,7 +620,7 @@ class CSDAPlanner(Planner):
             for _ in range(10):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
-                v = np.random.uniform(0, 1)
+                v = 1
                 w = np.random.uniform(-pi, pi)
 
                 nei_x, nei_y, nei_theta = self.motion_predict(current_x, current_y, current_theta, v, w)
