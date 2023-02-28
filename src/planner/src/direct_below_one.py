@@ -166,7 +166,6 @@ class Planner:
         dx = 0
         dy = 0
         for i in range(num_steps):
-            print(2)
             if w != 0:
                 dx = - v / w * np.sin(theta) + v / w * \
                      np.sin(theta + w / frequency)
@@ -420,11 +419,7 @@ class CSDAPlanner(Planner):
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
 
                 print(0)
-                # print('tmp_nei_g_score, ', tmp_nei_g_score,
-                #       'tmp_nei_f_score, ', tmp_nei_f_score,
-                #       'f_score[(nei_x_grid_index, nei_y_grid_index)]',
-                #       f_score[(nei_x_grid_index, nei_y_grid_index)] if (nei_x_grid_index,
-                #                                                         nei_y_grid_index) in f_score else '')
+
 
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
                         or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
