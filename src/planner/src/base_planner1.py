@@ -636,8 +636,8 @@ class CSDAPlanner(Planner):
                 nei_x_grid_index = int(nei_x)
                 nei_y_grid_index = int(nei_y)
 
-                if tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)] \
-                        or (nei_x_grid_index, nei_y_grid_index) not in f_score:
+                if (nei_x_grid_index, nei_y_grid_index) not in f_score \
+                    or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
                     g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
                     f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
