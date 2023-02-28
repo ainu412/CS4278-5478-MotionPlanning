@@ -473,9 +473,9 @@ class CSDAPlanner(Planner):
         # print('x', x, 'y', 'y')
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
-        x, y = self.unit_to_world(x, y)
-        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
+        x_world, y_world = self.unit_to_world(x, y)
+        return (0 <= x_world < self.world_width and 0 <= y_world < self.world_height) \
+               and self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))] == 100
 
 if __name__ == "__main__":
     # You can generate and save the plan using the code below
