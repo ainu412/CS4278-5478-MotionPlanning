@@ -688,7 +688,7 @@ if __name__ == "__main__":
 
     ############# choose different planner
     # planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=10)
     #############
 
     planner.set_goal(goal[0], goal[1])
