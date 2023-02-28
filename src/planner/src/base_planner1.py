@@ -576,7 +576,7 @@ class DSDAPlanner(Planner):
                and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
 
-class CSDAPlanner(Planner):
+class CSDAPlanner(DSDAPlanner):
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
         an initial pose and a goal pose.
@@ -608,11 +608,11 @@ class CSDAPlanner(Planner):
                              + (y - self._get_goal_position()[1]) ** 2) < 0.3
 
         init_x, init_y, init_theta = init_pose
-        g_score = {(init_x, init_y): 0}
-        f_score = {(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
+        g_score = {(int(init_x), int(init_y)): 0}
+        f_score = {(int(init_x), int(init_y)): 0 + h_euclidean(init_x, init_y)}
 
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
-        frontier.put((f_score[(init_x, init_y)], (init_x, init_y, init_theta)))
+        frontier.put((f_score[(int(init_x), int(init_y))], (init_x, init_y, init_theta)))
 
         path_parent = dict()
         path_control_from_parent = dict()
