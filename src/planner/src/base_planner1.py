@@ -304,7 +304,7 @@ class RobotClient:
             "/lab1/continuous_action_sequence",
             ContinuousActionSequenceExec,
         )
-        plan = [ContinuousAction(action) for action in action_seq]
+        plan = [ContinuousAction(action[0], action[1]) for action in action_seq]
         proxy(plan)
         assert self.is_close_to_goal(goal)
 
