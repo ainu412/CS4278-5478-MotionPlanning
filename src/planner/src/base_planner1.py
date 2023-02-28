@@ -23,6 +23,8 @@ ROBOT_SIZE = 0.2552  # width and height of robot in terms of stage unit
 
 ######### -> start of Newly added
 from Queue import PriorityQueue
+
+
 ######### <- end of Newly added
 
 def dump_action_table(action_table, filename):
@@ -386,7 +388,7 @@ class DSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
-                if x == 0 and y == 0: # skip center
+                if x == 0 and y == 0:  # skip center
                     continue
                 if euclidean_distance_to_center(x, y) <= inflation_ratio:
                     nei_relative_position.append([x, y])
@@ -573,6 +575,7 @@ class DSDAPlanner(Planner):
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
+
 class CSDAPlanner(Planner):
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
@@ -598,17 +601,17 @@ class CSDAPlanner(Planner):
         ## Euclidean distance as the heuristic H
         def h_euclidean(x1, y1):
             x2, y2 = self._get_goal_position()
-            return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+            return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
         def pose_is_close_to_goal(x, y):
-            return math.sqrt( (x - self._get_goal_position()[0]) ** 2
-                              + (y - self._get_goal_position()[1]) ** 2 ) < 0.3
+            return math.sqrt((x - self._get_goal_position()[0]) ** 2
+                             + (y - self._get_goal_position()[1]) ** 2) < 0.3
 
         init_x, init_y, init_theta = init_pose
         g_score = {(init_x, init_y): 0}
         f_score = {(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
 
-        frontier = PriorityQueue() # f score, priority queue: location (x, y, theta)
+        frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
         frontier.put((f_score[(init_x, init_y)], (init_x, init_y, init_theta)))
 
         path_parent = dict()
@@ -644,13 +647,14 @@ class CSDAPlanner(Planner):
                 nei_y_grid_index = int(nei_y)
 
                 if (nei_x_grid_index, nei_y_grid_index) not in f_score \
-                    or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
+                        or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
                     g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
                     f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
+            print('priority queue', frontier.queue)
         # get action sequence according to sequence path tree
         self.action_seq = []
         while (current_x, current_y) != (init_x, init_y):
@@ -661,7 +665,6 @@ class CSDAPlanner(Planner):
 
         ### for DSPA
         ########### save action table for DSPA
-
 
 
 if __name__ == "__main__":
