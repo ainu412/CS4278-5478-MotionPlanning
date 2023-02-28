@@ -829,8 +829,8 @@ if __name__ == "__main__":
 
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
-        planner.generate_plan((1, 1, 0))
-        # planner.generate_plan(robot.get_current_discrete_state())
+        # planner.generate_plan((1, 1, 0))
+        planner.generate_plan(robot.get_current_discrete_state())
 
     print('action sequence', planner.action_seq)
     robot.publish_continuous_control(planner.action_seq, goal)
