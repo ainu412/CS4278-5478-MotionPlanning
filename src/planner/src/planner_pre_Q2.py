@@ -684,6 +684,7 @@ class CSDAPlanner(Planner):
         #### for CSDA hybrid A*
         # hybrid A* algorithm implementation, assuming continuous states
         ## Euclidean distance as the heuristic H
+        ## How to compute this?
         def h_euclidean(x1, y1):
             x2, y2 = self._get_goal_position()
             return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
