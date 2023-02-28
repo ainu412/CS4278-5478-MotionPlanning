@@ -814,6 +814,8 @@ if __name__ == "__main__":
         resolution = 0.05
 
     robot = RobotClient()
+    rospy.sleep(0.1)
+
     inflation_ratio = 3  # TODO: You should change this value accordingly
 
     ############# choose different planner
