@@ -436,12 +436,15 @@ class CSDAPlanner(Planner):
 
         # get action sequence according to sequence path tree
         self.action_seq = []
+        path_seq = [(current_x, current_y, current_theta)]
         while (current_x, current_y) != (init_x, init_y):
             self.action_seq.append(path_control_from_parent[(current_x, current_y, current_theta)])
             (current_x, current_y, current_theta) = path_parent[(current_x, current_y, current_theta)]
+            path_seq.append((current_x, current_y, current_theta))
 
         self.action_seq.reverse()
-
+        path_seq.reverse()
+        print('path_seq', path_seq)
         ### for DSPA
         ########### save action table for DSPA
 
