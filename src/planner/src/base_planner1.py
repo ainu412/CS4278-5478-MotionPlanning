@@ -456,13 +456,14 @@ class DSDAPlanner(Planner):
 
         while frontier.not_empty:
             current_f, (current_x_unit, current_y_unit) = frontier.get()
-
+            print('current_f, (current_x_unit, current_y_unit)', current_f, (current_x_unit, current_y_unit))
             if (current_x_unit, current_y_unit) == self._get_goal_position():
                 break
 
             for next_relative_x_unit, next_relative_y_unit in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
                 nei_x_unit = next_relative_x_unit + current_x_unit
                 nei_y_unit = next_relative_y_unit + current_y_unit
+                print('nei_x_unit, nei_y_unit', nei_x_unit, nei_y_unit)
                 # make sure next x, y is within boundary and occupancy rate is below 100
                 if not (0 <= nei_x_unit < self.unit_width
                         and 0 <= nei_y_unit < self.unit_height):
