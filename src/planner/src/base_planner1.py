@@ -654,7 +654,7 @@ class CSDAPlanner(Planner):
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
-            if i < 10:
+            if i < 2:
                 i += 1
                 print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
                 print('priority queue', frontier.queue)
