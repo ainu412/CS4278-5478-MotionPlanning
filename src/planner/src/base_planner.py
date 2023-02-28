@@ -106,6 +106,8 @@ class Planner:
         #                          [0, -2], [0, -1], [0, 1], [0, 2],
         #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
         #                          [-2, -1], [-2, 0], [-2, 1]]
+        def xy_to_1d_grid_index(x, y):
+            return y * self.world_width + x
         for x in range(self.world_width):
             for y in range(self.world_height):
                 # get neighbor position
@@ -117,6 +119,15 @@ class Planner:
                         continue
                     # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
                     self.aug_map = max(self.aug_map[x][y], self.aug_map[nei_x][nei_y])
+        # index = 1006,
+        # x = 6, y = 5
+        # expected: self.aug_map[1006]=1
+        x = 6
+        y = 5
+        print('x', x, 'y', y)
+        print('1d grid index', xy_to_1d_grid_index(x, y))
+        print('expected augmap[index]', self.aug_map[1006])
+        print('real augmap[index]', self.aug_map[y_to_1d_grid_index(x, y)])
 
         ###################################<- end of FILL ME
 
