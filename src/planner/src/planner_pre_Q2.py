@@ -645,7 +645,7 @@ class CSDAPlanner(Planner):
 
         for x in range(self.world_width):
             for y in range(self.world_height):
-                if not self.collision_checker_wrt_original_map(x, y):
+                if not self.collision_checker(x, y):
                     continue
 
                 # get neighbor position
