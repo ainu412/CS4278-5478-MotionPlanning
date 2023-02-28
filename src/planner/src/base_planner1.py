@@ -21,7 +21,9 @@ from planner.srv import (
 
 ROBOT_SIZE = 0.2552  # width and height of robot in terms of stage unit
 
-### move to new class
+######### -> start of Newly added
+from Queue import PriorityQueue
+######### <- end of Newly added
 
 def dump_action_table(action_table, filename):
     """dump the MDP policy into a json file
