@@ -334,248 +334,6 @@ class RobotClient:
         assert self.is_close_to_goal(goal)
 
 
-class DSDAPlanner(Planner):
-    def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3):
-        """init function of the base planner. You should develop your own planner
-        using this class as a base.
-
-        For standard mazes, width = 200, height = 200, resolution = 0.05.
-        For COM1 map, width = 2500, height = 983, resolution = 0.02
-
-        Arguments:
-            world_width {int} -- width of map in terms of pixels
-            world_height {int} -- height of map in terms of pixels
-            world_resolution {float} -- resolution of map
-
-        Keyword Arguments:
-            inflation_ratio {int} -- [description] (default: {3})
-        """
-        self.map = None
-        self.pose = None
-        self.goal = None
-        self.action_seq = None  # output
-        self.aug_map = None  # occupancy grid with inflation
-        self.action_table = {}
-
-        self.world_width = world_width
-        self.world_height = world_height
-        self.resolution = world_resolution
-
-        ######### ->newly added for DSDAPlanner
-        self.unit_width = int(world_width * world_resolution)
-        self.unit_height = int(world_height * world_resolution)
-
-    def setup_map(self):
-        """Get the occupancy grid and inflate the obstacle by some pixels.
-
-        You should implement the obstacle inflation yourself to handle uncertainty.
-        """
-        # Hint: search the ROS message defintion of OccupancyGrid
-        occupancy_grid = rospy.wait_for_message('/map', OccupancyGrid)
-        self.map = occupancy_grid.data
-        # you should inflate the map to get self.aug_map
-        self.aug_map = copy.deepcopy(self.map)
-
-        ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
-        # print out self.map to see what the data format is like
-        # int8[] array
-        # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
-        self.aug_map = list(self.aug_map)
-        nei_relative_position = []
-
-        def euclidean_distance_to_center(x, y):
-            return np.round(np.sqrt(x ** 2 + y ** 2))
-
-        for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
-            for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
-                if x == 0 and y == 0:  # skip center
-                    continue
-                if euclidean_distance_to_center(x, y) <= inflation_ratio:
-                    nei_relative_position.append([x, y])
-
-        # when inflation radius is 3
-        # nei_relative_position = [[3, 0], [3, 1], [2, 2], [1, 3], [0, 3], [-1, 3],
-        #                          [-2, -2], [-3, 1], [-3, 0], [-3, -1], [-2, 2],
-        #                          [-1, -3], [0, -3], [1, -3], [2, -2], [3, -1],
-        #                          [2, -1], [2, 0], [2, 1], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2],
-        #                          [0, -2], [0, -1], [0, 1], [0, 2],
-        #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
-        #                          [-2, -1], [-2, 0], [-2, 1]]
-
-        for x in range(self.world_width):
-            for y in range(self.world_height):
-                if not self.collision_checker_wrt_original_map(x, y):
-                    continue
-
-                # get neighbor position
-                for nei_relative_x, nei_relative_y in nei_relative_position:
-                    nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
-                    # if neighboring node not within map boundary, then skip
-                    if not (0 <= nei_x < self.world_width
-                            and 0 <= nei_y < self.world_height):
-                        continue
-                    # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
-                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = 100
-
-        self.aug_map = tuple(self.aug_map)
-
-        # visualize aug map DONE!
-        # for y in range(199, -1 , -1):
-        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
-        ###################################<- end of FILL ME
-
-    def xy_to_1d_grid_index(self, x, y):
-        return y * self.world_width + x
-
-    def generate_plan(self, init_pose):
-        """TODO: FILL ME! This function generates the plan for the robot, given
-        an initial pose and a goal pose.
-
-        You should store the list of actions into self.action_seq, or the policy
-        into self.action_table.
-
-        In discrete case (task 1 and task 3), the robot has only 4 heading directions
-        0: east, 1: north, 2: west, 3: south
-
-        Each action could be: (1, 0) FORWARD, (0, 1) LEFT 90 degree, (0, -1) RIGHT 90 degree
-
-        In continuous case (task 2), the robot can have arbitrary orientations
-
-        Each action could be: (v, \omega) where v is the linear velocity and \omega is the angular velocity
-        """
-
-        ############################################-> start of FILL ME!
-
-        #### for DSDA
-        # A* algorithm implementation, assuming discrete states
-        ## Manhattan distance as the heuristic H
-        def h_manhattan(x1, y1):
-            x2, y2 = self._get_goal_position()
-            print('x1, y1, x2, y2', x1, y1, x2, y2)
-            return abs(x1 - x2) + abs(y1 - y2)
-
-        init_x_unit, init_y_unit, init_theta = init_pose
-
-        g_score = {(init_x_unit, init_y_unit): 0}
-        f_score = {(init_x_unit, init_y_unit): 0 + h_manhattan(init_x_unit, init_y_unit)}
-
-        frontier = PriorityQueue()
-        frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x_unit, init_y_unit)))
-
-        path_parent = dict()
-
-        while not frontier.empty():
-            current_f, (current_x_unit, current_y_unit) = frontier.get()
-            print('current_f, (current_x_unit, current_y_unit)', current_f, (current_x_unit, current_y_unit))
-            if (current_x_unit, current_y_unit) == self._get_goal_position():
-                break
-
-            for next_relative_x_unit, next_relative_y_unit in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
-                nei_x_unit = next_relative_x_unit + current_x_unit
-                nei_y_unit = next_relative_y_unit + current_y_unit
-                print('nei_x_unit, nei_y_unit', nei_x_unit, nei_y_unit)
-                # make sure next x, y is within boundary and occupancy rate is below 100
-                if not (0 <= nei_x_unit < self.unit_width
-                        and 0 <= nei_y_unit < self.unit_height):
-                    continue
-                print('0')
-                if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
-                    continue
-
-                tmp_nei_g_score = g_score.get((current_x_unit, current_y_unit)) + 1
-                tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x_unit, nei_y_unit)
-
-                print('1')
-
-                if (nei_x_unit, nei_y_unit) not in f_score or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
-                    print('2')
-                    g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
-                    f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
-                    frontier.put((tmp_nei_f_score, (nei_x_unit, nei_y_unit)))
-                    path_parent[(nei_x_unit, nei_y_unit)] = (current_x_unit, current_y_unit)
-
-                if not frontier.empty():
-                    print('frontier', frontier.queue)
-
-        # get current path
-        path_seq_rev = [self._get_goal_position()]
-        cur_x, cur_y = self._get_goal_position()
-        while (cur_x, cur_y) != (init_x_unit, init_y_unit):
-            (cur_x, cur_y) = path_parent[(cur_x, cur_y)]
-            path_seq_rev.append((cur_x, cur_y))
-
-        path_seq_rev.reverse()
-        path_seq = path_seq_rev
-        print('path_seq', path_seq)
-
-        # get action sequence
-        self.action_seq = []
-        cur_x, cur_y, cur_ori = init_pose
-        cur_step = 0
-        while cur_step < len(path_seq) - 1:  # hasn't arrived at goal, needs one more step
-            next_x, next_y = path_seq[cur_step + 1]
-            ## forward action
-            if (cur_ori == 0 and (next_x - cur_x, next_y - cur_y) == (1, 0)) \
-                    or (cur_ori == 1 and (next_x - cur_x, next_y - cur_y) == (0, 1)) \
-                    or (cur_ori == 2 and (next_x - cur_x, next_y - cur_y) == (-1, 0)) \
-                    or (cur_ori == 3 and (next_x - cur_x, next_y - cur_y) == (0, -1)):
-                self.action_seq.append((1, 0))
-                cur_x, cur_y, cur_ori = next_x, next_y, cur_ori
-
-            ## turn left then forward
-            elif (cur_ori == 0 and (next_x - cur_x, next_y - cur_y) == (0, 1)) \
-                    or (cur_ori == 1 and (next_x - cur_x, next_y - cur_y) == (-1, 0)) \
-                    or (cur_ori == 2 and (next_x - cur_x, next_y - cur_y) == (0, -1)) \
-                    or (cur_ori == 3 and (next_x - cur_x, next_y - cur_y) == (1, 0)):
-                self.action_seq.append((0, 1))
-                self.action_seq.append((1, 0))
-                cur_x, cur_y, cur_ori = next_x, next_y, (cur_ori + 1) % 4
-
-            ## turn right then forward
-            elif (cur_ori == 0 and (next_x - cur_x, next_y - cur_y) == (0, -1)) \
-                    or (cur_ori == 1 and (next_x - cur_x, next_y - cur_y) == (1, 0)) \
-                    or (cur_ori == 2 and (next_x - cur_x, next_y - cur_y) == (0, 1)) \
-                    or (cur_ori == 3 and (next_x - cur_x, next_y - cur_y) == (-1, 0)):
-                self.action_seq.append((0, -1))
-                self.action_seq.append((1, 0))
-                cur_x, cur_y, cur_ori = next_x, next_y, (cur_ori - 1) % 4
-
-            ## turn left then turn left then forward
-            elif (cur_ori == 0 and (next_x - cur_x, next_y - cur_y) == (-1, 0)) \
-                    or (cur_ori == 1 and (next_x - cur_x, next_y - cur_y) == (0, -1)) \
-                    or (cur_ori == 2 and (next_x - cur_x, next_y - cur_y) == (1, 0)) \
-                    or (cur_ori == 3 and (next_x - cur_x, next_y - cur_y) == (0, 1)):
-                self.action_seq.append((0, 1))
-                self.action_seq.append((0, 1))
-                self.action_seq.append((1, 0))
-                cur_x, cur_y, cur_ori = next_x, next_y, (cur_ori + 2) % 4
-
-            cur_step += 1
-
-    def collision_checker_wrt_original_map(self, x, y):
-        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
-
-    def collision_checker(self, x, y):
-        """TODO: FILL ME!
-        You should implement the collision checker.
-        Hint: you should consider the augmented map and the world size
-
-        Arguments:
-            x {int} -- current x of robot
-            y {int} -- current y of robot
-
-        Returns:
-            bool -- True for collision, False for non-collision
-        """
-        # print('augmap[400:600]', self.aug_map[400:600])
-        # print('x', x, 'y', 'y')
-        # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
-        # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
-        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
-
-
 class CSDAPlanner(Planner):
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
@@ -687,6 +445,24 @@ class CSDAPlanner(Planner):
         ### for DSPA
         ########### save action table for DSPA
 
+    def collision_checker(self, x, y):
+        """TODO: FILL ME!
+        You should implement the collision checker.
+        Hint: you should consider the augmented map and the world size
+
+        Arguments:
+            x {int} -- current x of robot
+            y {int} -- current y of robot
+
+        Returns:
+            bool -- True for collision, False for non-collision
+        """
+        # print('augmap[400:600]', self.aug_map[400:600])
+        # print('x', x, 'y', 'y')
+        # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
+        # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
 if __name__ == "__main__":
     # You can generate and save the plan using the code below
