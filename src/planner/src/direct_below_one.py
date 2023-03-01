@@ -354,6 +354,7 @@ class CSDAPlanner(Planner):
         self.pose = None
         self.goal = None
         self.action_seq = None  # output
+        self.path_seq = None # output
         self.aug_map = None  # occupancy grid with inflation
         self.action_table = {}
 
@@ -532,15 +533,14 @@ class CSDAPlanner(Planner):
 
         # get action sequence according to sequence path tree
         self.action_seq = []
-        path_seq = [(current_x, current_y, current_theta)]
+        self.path_seq = [(current_x, current_y, current_theta)]
         while (current_x, current_y) != (init_x, init_y):
             self.action_seq.append(path_control_from_parent[(current_x, current_y, current_theta)])
             (current_x, current_y, current_theta) = path_parent[(current_x, current_y, current_theta)]
-            path_seq.append((current_x, current_y, current_theta))
+            self.path_seq.append((current_x, current_y, current_theta))
 
         self.action_seq.reverse()
-        path_seq.reverse()
-        print('path_seq', path_seq)
+        self.path_seq.reverse()
         ### for DSPA
         ########### save action table for DSPA
 
@@ -619,8 +619,13 @@ if __name__ == "__main__":
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_discrete_state())
-    # print('action sequence', planner.action_seq)
-    robot.publish_continuous_control(planner.action_seq, goal)
+    print('action sequence', planner.action_seq)
+
+    for i, action in enumerate(planner.action_seq):
+        print('step', i)
+        print('actual path', robot.get_current_discrete_state()[:2])
+        print('planned path', planner.path_seq[i])
+        robot.publish_continuous_control([action], goal)
 
     # an ought to be collided point
     # print('1.69, 2', planner.collision_checker(1.69, 2))
