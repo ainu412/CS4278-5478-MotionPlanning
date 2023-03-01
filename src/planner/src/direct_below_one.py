@@ -335,6 +335,34 @@ class RobotClient:
 
 
 class CSDAPlanner(Planner):
+    def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3):
+        """init function of the base planner. You should develop your own planner
+        using this class as a base.
+
+        For standard mazes, width = 200, height = 200, resolution = 0.05.
+        For COM1 map, width = 2500, height = 983, resolution = 0.02
+
+        Arguments:
+            world_width {int} -- width of map in terms of pixels
+            world_height {int} -- height of map in terms of pixels
+            world_resolution {float} -- resolution of map
+
+        Keyword Arguments:
+            inflation_ratio {int} -- [description] (default: {3})
+        """
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
 
@@ -582,7 +610,7 @@ if __name__ == "__main__":
     # print('action sequence', planner.action_seq)
     # robot.publish_discrete_control(planner.action_seq, goal)
 
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=15)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=5)
     #############
 
     planner.set_goal(goal[0], goal[1])
@@ -592,6 +620,7 @@ if __name__ == "__main__":
     # robot.publish_continuous_control(planner.action_seq, goal)
     print('1.73, 2.85', planner.collision_checker(1.73, 2.85))
 
+    print('inflation_ratio', planner.inflation_ratio)
     for x in range(10,30):
         for y in range(10,30):
             print('here', float(x)/10, float(y)/10, planner.collision_checker(float(x)/10, float(y)/10))
