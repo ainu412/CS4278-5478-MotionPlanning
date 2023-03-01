@@ -386,7 +386,7 @@ class CSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
-                print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
+                # print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
                 if x == 0 and y == 0: # skip center
                     continue
                 if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
@@ -617,13 +617,13 @@ if __name__ == "__main__":
     #############
 
     planner.set_goal(goal[0], goal[1])
-    # if planner.goal is not None:
-    #     planner.generate_plan(robot.get_current_discrete_state())
+    if planner.goal is not None:
+        planner.generate_plan(robot.get_current_discrete_state())
     # print('action sequence', planner.action_seq)
-    # robot.publish_continuous_control(planner.action_seq, goal)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
     # an ought to be collided point
-    print('1.80, 1.71', planner.collision_checker(1.80, 1.71))
+    # print('1.80, 1.71', planner.collision_checker(1.80, 1.71))
 
 
     # check collision points around (2, 2)
