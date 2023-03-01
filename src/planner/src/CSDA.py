@@ -480,7 +480,7 @@ class CSDAPlanner(Planner):
 
         def pose_is_close_to_goal(x, y):
             return math.sqrt((x - self._get_goal_position()[0]) ** 2
-                             + (y - self._get_goal_position()[1]) ** 2) < 0.2
+                             + (y - self._get_goal_position()[1]) ** 2) < 0.1
 
         grid_resolution = 0.1
 
