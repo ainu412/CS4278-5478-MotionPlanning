@@ -416,8 +416,8 @@ class DSDAPlanner(Planner):
         self.aug_map = tuple(self.aug_map)
 
         # visualize aug map DONE!
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
@@ -622,11 +622,13 @@ class DSDAPlanner(Planner):
             x = x1
             for y in range(min(y1, y2), max(y1, y2) + 1):
                 if self.collision_checker(x, y):
+                    print(x * self.resolution, y * self.resolution, 'collide!!')
                     return True
         elif y1 == y2:
             y = y1
             for x in range(min(x1, x2), max(x1, x2) + 1):
                 if self.collision_checker(x, y):
+                    print(x * self.resolution, y * self.resolution, 'collide!!')
                     return True
         return False
 
@@ -679,7 +681,7 @@ if __name__ == "__main__":
     planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     planner.set_goal(goal[0], goal[1])
 
-    print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
+    # print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
 
 
     if planner.goal is not None:
