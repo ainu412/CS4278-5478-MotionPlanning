@@ -698,8 +698,8 @@ if __name__ == "__main__":
     # e.g., robot.publish_discrete_control(planner.action_seq, goal)
 
     # save your action sequence
-    # result = np.array(planner.action_seq)
-    # np.savetxt("actions_continuous.txt", result, fmt="%.2e")
+    result = np.array(planner.action_seq)
+    np.savetxt(f"DSDA_map1_{goal[0]}_{goal[1]}.txt", result, fmt="%.2e")
 
     # for MDP, please dump your policy table into a json file
     # dump_action_table(planner.action_table, 'mdp_policy.json')

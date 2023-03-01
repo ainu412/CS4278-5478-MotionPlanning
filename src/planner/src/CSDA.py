@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# repo token: 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
+# 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
 import math
 from math import *
 import json
@@ -21,7 +24,11 @@ from planner.srv import (
 
 ROBOT_SIZE = 0.2552  # width and height of robot in terms of stage unit
 
-### move to new class
+######### -> start of Newly added
+from Queue import PriorityQueue
+
+
+######### <- end of Newly added
 
 def dump_action_table(action_table, filename):
     """dump the MDP policy into a json file
@@ -298,8 +305,13 @@ class RobotClient:
 
         Checkout the definitions in planner/msg/ and planner/srv/
         """
-        pass
-        assert self.is_close_to_goal(goal)
+        proxy = rospy.ServiceProxy(
+            "/lab1/continuous_action_sequence",
+            ContinuousActionSequenceExec,
+        )
+        plan = [ContinuousAction(action[0], action[1]) for action in action_seq]
+        proxy(plan)
+        # assert self.is_close_to_goal(goal), "Didn't reach the goal."
 
     def execute_policy(self, action_table, goal):
         """Execute a given policy in MDP.
@@ -345,22 +357,16 @@ class CSDAPlanner(Planner):
         self.pose = None
         self.goal = None
         self.action_seq = None  # output
+        self.path_seq = None # output
         self.aug_map = None  # occupancy grid with inflation
         self.action_table = {}
 
         self.world_width = world_width
         self.world_height = world_height
         self.resolution = world_resolution
-
-        ######### ->newly added for DSDAPlanner
-        self.unit_width = int(world_width * world_resolution)
-        self.unit_height = int(world_height * world_resolution)
-        ######### <-
-
         self.inflation_ratio = inflation_ratio
         self.setup_map()
         rospy.sleep(1)
-
     def setup_map(self):
         """Get the occupancy grid and inflate the obstacle by some pixels.
 
@@ -384,11 +390,13 @@ class CSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
+                # print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
                 if x == 0 and y == 0: # skip center
                     continue
-                if euclidean_distance_to_center(x, y) <= inflation_ratio:
+                if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
                     nei_relative_position.append([x, y])
-
+        # print('self.inflation_ratio', self.inflation_ratio)
+        # print('nei_relative_position', nei_relative_position)
         # when inflation radius is 3
         # nei_relative_position = [[3, 0], [3, 1], [2, 2], [1, 3], [0, 3], [-1, 3],
         #                          [-2, -2], [-3, 1], [-3, 0], [-3, -1], [-2, 2],
@@ -415,13 +423,14 @@ class CSDAPlanner(Planner):
 
         self.aug_map = tuple(self.aug_map)
 
+
+        # visualize non aug map
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
         # for y in range(199, -1 , -1):
         #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
-
-    def xy_to_1d_grid_index(self, x, y):
-        return y * self.world_width + x
 
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
@@ -445,100 +454,112 @@ class CSDAPlanner(Planner):
         #### for CSDA hybrid A*
         # hybrid A* algorithm implementation, assuming continuous states
         ## Euclidean distance as the heuristic H
-        ## How to compute this?
         def h_euclidean(x1, y1):
             x2, y2 = self._get_goal_position()
-            return np.sqrt((x1 - x2 / self.resolution) ** 2 + (y1 - y2 / self.resolution) ** 2)
+            return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
         def pose_is_close_to_goal(x, y):
-            return math.sqrt((x * resolution - self._get_goal_position()[0]) ** 2
-                             + (y * resolution - self._get_goal_position()[1]) ** 2) < 0.3
+            return math.sqrt((x - self._get_goal_position()[0]) ** 2
+                             + (y - self._get_goal_position()[1]) ** 2) < 0.2
 
-        init_x_unit, init_y_unit, init_theta = init_pose
+        grid_resolution = 0.1
+
+        def loc_to_grid_index(x, y):
+            return int(x / grid_resolution), int(y / grid_resolution)
 
 
-        from Queue import PriorityQueue
+
+        init_x, init_y, init_theta = init_pose
+        g_score = {loc_to_grid_index(init_x, init_y): 0}
+        f_score = {loc_to_grid_index(init_x, init_y): 0 + h_euclidean(init_x, init_y)}
+
         frontier = PriorityQueue()  # f score, priority queue: location (x, y, theta)
-        init_x, init_y = init_x_unit / self.resolution, init_y_unit / self.resolution
-
-        g_score = {(init_x_unit, init_y_unit): 0}
-        f_score = {(init_x_unit, init_y_unit): 0 + h_euclidean(init_x, init_y)}
-
-        frontier.put((f_score[(init_x_unit, init_y_unit)], (init_x, init_y, init_theta)))
+        frontier.put((f_score[loc_to_grid_index(init_x, init_y)], (init_x, init_y, init_theta)))
 
         path_parent = dict()
         path_control_from_parent = dict()
 
-        def loc_to_unit(x):
-            return int(x * self.resolution)
-
-        # current_x_unit, current_y_unit, current_theta = 1, 1, 0  # dummy initialization
-        # current_x_unit, current_y_unit, current_theta = 1, 1, 0  # dummy initialization
-        i = 0
+        current_x, current_y, current_theta = 1, 1, 0  # dummy initialization
 
         while not frontier.empty():
             current_f, (current_x, current_y, current_theta) = frontier.get()
 
-            current_x_unit, current_y_unit = loc_to_unit(current_x), loc_to_unit(current_y)
-
-            if pose_is_close_to_goal(current_x_unit, current_y_unit):
+            if pose_is_close_to_goal(current_x, current_y):
                 break
 
-            for w in np.linspace(-pi, pi, 10):
+            for _ in range(20):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
-                v = 1 / self.resolution
-                # w = np.random.uniform(-pi, pi)
+                v = np.random.uniform(0, 1)
+                w = np.random.uniform(-pi, pi)
 
+                # print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
                 nei_pose = self.motion_predict(current_x, current_y, current_theta, v, w)
                 if nei_pose is None:
                     continue
 
                 nei_x, nei_y, nei_theta = nei_pose
-                print('nei_x, nei_y, nei_theta', nei_x, nei_y, nei_theta)
                 # make sure next x, y is within boundary and occupancy rate is below 100
+                print('nei_x, nei_y, nei_theta, collision', nei_x, nei_y, nei_theta, self.collision_checker(nei_x, nei_y))
+
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
                     continue
                 if self.collision_checker(nei_x, nei_y):
                     continue
 
-                print(0)
-
-                tmp_nei_g_score = g_score[(current_x_unit, current_y_unit)] + abs(v / w * (nei_theta - current_theta))
+                cur_x_grid_index, cur_y_grid_index = loc_to_grid_index(current_x, current_y)
+                nei_x_grid_index, nei_y_grid_index = loc_to_grid_index(nei_x, nei_y)
+                tmp_nei_g_score = g_score[(cur_x_grid_index, cur_y_grid_index)] + abs(
+                    v / w * (nei_theta - current_theta))
                 tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
-                nei_x_unit, nei_y_unit = loc_to_unit(nei_x), loc_to_unit(nei_y)
 
-                if (nei_x_unit, nei_y_unit) not in f_score \
-                        or tmp_nei_f_score < f_score[(nei_x_unit, nei_y_unit)]:
-                    print(1)
-                    g_score[(nei_x_unit, nei_y_unit)] = tmp_nei_g_score
-                    f_score[(nei_x_unit, nei_y_unit)] = tmp_nei_f_score
+                # print(0)
+
+
+                if (nei_x_grid_index, nei_y_grid_index) not in f_score \
+                        or tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)]:
+                    # print(1)
+                    g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
+                    f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
                     frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
                     path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
                     path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
 
-            if i < 2:
-                i += 1
-                print('i current_f, (current_x, current_y, current_theta)', current_f,
-                      (current_x, current_y, current_theta))
-                print('priority queue', frontier.queue)
+            # if i < 2:
+            #     i += 1
+            #     print('i current_f, (current_x, current_y, current_theta)', current_f, (current_x, current_y, current_theta))
+            #     print('priority queue', frontier.queue)
+
+        # print('path_parent', path_parent)
+        # print('path_control_from_parent', path_control_from_parent)
 
         # get action sequence according to sequence path tree
         self.action_seq = []
-        while (current_x_unit, current_y_unit) != (init_x_unit, init_y_unit):
+        self.path_seq = [(current_x, current_y, current_theta)]
+        while (current_x, current_y) != (init_x, init_y):
             self.action_seq.append(path_control_from_parent[(current_x, current_y, current_theta)])
             (current_x, current_y, current_theta) = path_parent[(current_x, current_y, current_theta)]
-            current_x_unit, current_y_unit = loc_to_unit(current_x), loc_to_unit(current_y)
+            self.path_seq.append((current_x, current_y, current_theta))
 
         self.action_seq.reverse()
+        self.path_seq.reverse()
+        ### for DSPA
+        ########### save action table for DSPA
+
+    def xy_to_1d_grid_index(self, x, y):
+        return y * self.world_width + x
+
+    def unit_to_world(self, x_unit, y_unit):
+        return int(x_unit / self.resolution), int(y_unit / self.resolution)
 
     def collision_checker_wrt_original_map(self, x, y):
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
+               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
 
     def collision_checker(self, x, y):
         """TODO: FILL ME!
+        unit collision checker
         You should implement the collision checker.
         Hint: you should consider the augmented map and the world size
 
@@ -553,9 +574,12 @@ class CSDAPlanner(Planner):
         # print('x', x, 'y', 'y')
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
-        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.aug_map[self.xy_to_1d_grid_index(int(x), int(y))] == 100
-
+        x_world, y_world = self.unit_to_world(x, y)
+        # print('x_world, y_world', x_world, y_world)
+        # print('xy_to_1d_grid_index', self.xy_to_1d_grid_index(int(x_world), int(y_world)))
+        # print('aug_map', self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))])
+        return (0 <= x_world < self.world_width and 0 <= y_world < self.world_height) \
+               and self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))] == 100
 
 if __name__ == "__main__":
     # You can generate and save the plan using the code below
@@ -582,12 +606,40 @@ if __name__ == "__main__":
         resolution = 0.05
 
     robot = RobotClient()
-    rospy.sleep(0.1)
     inflation_ratio = 3  # TODO: You should change this value accordingly
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+
+    ############# choose different planner
+    # planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    # planner.set_goal(goal[0], goal[1])
+    # if planner.goal is not None:
+    #     planner.generate_plan(robot.get_current_discrete_state())
+    # print('action sequence', planner.action_seq)
+    # robot.publish_discrete_control(planner.action_seq, goal)
+
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=7)
+    #############
+
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
+        planner.generate_plan(robot.get_current_continuous_state())
+    print('action sequence', planner.action_seq)
+
+    for i, action in enumerate(planner.action_seq):
+        print('step', i)
+        print('actual path', robot.get_current_continuous_state())
+        print('planned path', planner.path_seq[i])
+        robot.publish_continuous_control([action], goal)
+
+    # an ought to be collided point
+    # print('1.69, 2', planner.collision_checker(1.69, 2))
+    # print('1.82, 1.6', planner.collision_checker(1.82, 1.6))
+
+
+    # check collision points around (2, 2)
+    # print('inflation_ratio', planner.inflation_ratio)
+    # for x in range(10,30):
+    #     for y in range(10,30):
+    #         print('here', float(x)/10, float(y)/10, planner.collision_checker(float(x)/10, float(y)/10))
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
@@ -611,8 +663,7 @@ if __name__ == "__main__":
     # You should see an AssertionError since we didn't reach the goal.
     # mock_action_plan = [(0, -1), (0, -1), (1, 0), (1, 0), (0, -1), (0, 1), (0, -1), (1, 0), (1, 0)]
 
-    print('action sequence', planner.action_seq)
-    robot.publish_continuous_control(planner.action_seq, goal)
+    # robot.publish_discrete_control(planner.action_seq, goal)
     # TODO: FILL ME!
     # After you implement your planner, send the plan/policy generated by your
     # planner using appropriate execution calls.
