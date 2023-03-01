@@ -335,6 +335,64 @@ class RobotClient:
 
 
 class CSDAPlanner(Planner):
+    def setup_map(self):
+        """Get the occupancy grid and inflate the obstacle by some pixels.
+
+        You should implement the obstacle inflation yourself to handle uncertainty.
+        """
+        # Hint: search the ROS message defintion of OccupancyGrid
+        occupancy_grid = rospy.wait_for_message('/map', OccupancyGrid)
+        self.map = occupancy_grid.data
+        # you should inflate the map to get self.aug_map
+        self.aug_map = copy.deepcopy(self.map)
+
+        ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
+        # print out self.map to see what the data format is like
+        # int8[] array
+        # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
+        self.aug_map = list(self.aug_map)
+        nei_relative_position = []
+
+        def euclidean_distance_to_center(x, y):
+            return np.round(np.sqrt(x ** 2 + y ** 2))
+
+        for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
+            for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
+                if x == 0 and y == 0: # skip center
+                    continue
+                if euclidean_distance_to_center(x, y) <= inflation_ratio:
+                    nei_relative_position.append([x, y])
+
+        # when inflation radius is 3
+        # nei_relative_position = [[3, 0], [3, 1], [2, 2], [1, 3], [0, 3], [-1, 3],
+        #                          [-2, -2], [-3, 1], [-3, 0], [-3, -1], [-2, 2],
+        #                          [-1, -3], [0, -3], [1, -3], [2, -2], [3, -1],
+        #                          [2, -1], [2, 0], [2, 1], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2],
+        #                          [0, -2], [0, -1], [0, 1], [0, 2],
+        #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
+        #                          [-2, -1], [-2, 0], [-2, 1]]
+
+        for x in range(self.world_width):
+            for y in range(self.world_height):
+                if not self.collision_checker_wrt_original_map(x, y):
+                    continue
+
+                # get neighbor position
+                for nei_relative_x, nei_relative_y in nei_relative_position:
+                    nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
+                    # if neighboring node not within map boundary, then skip
+                    if not (0 <= nei_x < self.world_width
+                            and 0 <= nei_y < self.world_height):
+                        continue
+                    # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
+                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = 100
+
+        self.aug_map = tuple(self.aug_map)
+
+        # visualize aug map DONE!
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        ###################################<- end of FILL ME
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
         an initial pose and a goal pose.
