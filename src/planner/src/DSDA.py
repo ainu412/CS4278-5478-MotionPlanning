@@ -419,11 +419,11 @@ class DSDAPlanner(Planner):
 
 
         # visualize non aug map
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
@@ -559,70 +559,6 @@ class DSDAPlanner(Planner):
 
             cur_step += 1
 
-        # #### for CSDA hybrid A*
-        # # hybrid A* algorithm implementation, assuming continuous states
-        # ## Euclidean distance as the heuristic H
-        # def h_euclidean(x1, y1):
-        #     x2, y2 = self._get_goal_position()
-        #     return np.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-        # def pose_is_close_to_goal(x, y):
-        #     return math.sqrt( (x - self._get_goal_position()[0]) ** 2
-        #                       + (y - self._get_goal_position()[1]) ** 2 ) < 0.3
-        #
-        # init_x, init_y, init_theta = init_pose
-        # frontier = PriorityQueue()
-        # frontier.put((0, (init_x, init_y, init_theta)))  # cost to come, priority queue: point location (x, y, theta)
-        #
-        # g_score = {(init_x, init_y): 0}
-        # f_score = {(init_x, init_y): h_euclidean(init_x, init_y)}
-        # path_parent = dict()
-        # path_control_from_parent = dict()
-        #
-        # while frontier.not_empty:
-        #     current_f, (current_x, current_y, current_theta) = frontier.get()
-        #
-        #     if pose_is_close_to_goal(current_x, current_y):
-        #         path_seq_rev = [(current_x, current_y, current_theta)]
-        #         break
-        #
-        #     # sample a neighboring node that can be reached within one timestep
-        #     for _ in range(10):
-        #         # uniform sample v and w
-        #         v = np.random.uniform(0, 1)
-        #         w = np.random.uniform(-pi, pi)
-        #
-        #         nei_x, nei_y, nei_theta = self.motion_predict(cur_x, cur_y, current_theta, v, w)
-        #         # make sure next x, y is within boundary and occupancy rate is below 100
-        #         if not (0 <= nei_x < self.world_width
-        #                 and 0 <= nei_y < self.world_height):
-        #             continue
-        #         if self.collision_checker(nei_x, nei_y) >= 100:
-        #             continue
-        #
-        #         tmp_nei_g_score = g_score[(current_x, current_y)] + v / w * abs(nei_theta - current_theta)
-        #         tmp_nei_f_score = tmp_nei_g_score + h_euclidean(nei_x, nei_y)
-        #         nei_x_grid_index = int(nei_x)
-        #         nei_y_grid_index = int(nei_y)
-        #
-        #         if tmp_nei_f_score < f_score[(nei_x_grid_index, nei_y_grid_index)] \
-        #                 or (nei_x_grid_index, nei_y_grid_index) not in f_score:
-        #             g_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_g_score
-        #             f_score[(nei_x_grid_index, nei_y_grid_index)] = tmp_nei_f_score
-        #             frontier.put((tmp_nei_f_score, (nei_x, nei_y, nei_theta)))
-        #             path_parent[(nei_x, nei_y, nei_theta)] = (current_x, current_y, current_theta)
-        #             path_control_from_parent[(nei_x, nei_y, nei_theta)] = (v, w)
-        #
-        # # get action sequence according to sequence path tree
-        # self.action_seq = []
-        # while (current_x, current_y) != (init_x, init_y):
-        #     self.action_seq.append(path_control_from_parent[(current_x, current_y, current_theta)])
-        #     (current_x, current_y, current_theta) = path_parent[(current_x, current_y, current_theta)]
-        #
-        # self.action_seq.reverse()
-
-        ### for DSPA
-        ########### save action table for DSPA
-
     def collision_checker_path(self, x1, y1, x2, y2):
         if x1 == x2:
             x = x1
@@ -726,7 +662,7 @@ if __name__ == "__main__":
 
     # save your action sequence
     result = np.array(planner.action_seq)
-    np.savetxt("DSDA_map3_{}_{}.txt".format(goal[0], goal[1]), result, fmt="%.2e")
+    np.savetxt("DSDA_map4_{}_{}.txt".format(goal[0], goal[1]), result, fmt="%.2e")
 
     # for MDP, please dump your policy table into a json file
     # dump_action_table(planner.action_table, 'mdp_policy.json')
