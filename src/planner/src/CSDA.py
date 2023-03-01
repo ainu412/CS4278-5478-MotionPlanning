@@ -640,7 +640,7 @@ if __name__ == "__main__":
     # robot.publish_discrete_control(planner.action_seq, goal)
     #############
 
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=12)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=16)
 
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
