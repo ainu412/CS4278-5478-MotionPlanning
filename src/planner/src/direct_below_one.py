@@ -617,10 +617,10 @@ if __name__ == "__main__":
     #############
 
     planner.set_goal(goal[0], goal[1])
-    # if planner.goal is not None:
-    #     planner.generate_plan(robot.get_current_discrete_state())
-    # # print('action sequence', planner.action_seq)
-    # robot.publish_continuous_control(planner.action_seq, goal)
+    if planner.goal is not None:
+        planner.generate_plan(robot.get_current_discrete_state())
+    # print('action sequence', planner.action_seq)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
     # an ought to be collided point
     # print('1.69, 2', planner.collision_checker(1.69, 2))
