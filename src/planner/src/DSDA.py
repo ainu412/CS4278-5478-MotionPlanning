@@ -678,6 +678,10 @@ if __name__ == "__main__":
     inflation_ratio = 5  # TODO: You should change this value accordingly
     planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     planner.set_goal(goal[0], goal[1])
+
+    print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
+
+
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_discrete_state())
 
@@ -702,7 +706,6 @@ if __name__ == "__main__":
     # Forward! Forward! Turn left!
     # You should see an AssertionError since we didn't reach the goal.
     # mock_action_plan = [(0, -1), (0, -1), (1, 0), (1, 0), (0, -1), (0, 1), (0, -1), (1, 0), (1, 0)]
-    print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
     print('action sequence', planner.action_seq)
     robot.publish_discrete_control(planner.action_seq, goal)
     # TODO: FILL ME!
