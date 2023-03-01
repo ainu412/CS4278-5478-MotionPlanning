@@ -386,6 +386,7 @@ class CSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
+                print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
                 if x == 0 and y == 0: # skip center
                     continue
                 if euclidean_distance_to_center(x, y) <= inflation_ratio:
