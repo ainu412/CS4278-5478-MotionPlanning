@@ -590,7 +590,7 @@ if __name__ == "__main__":
 
     for x in range(10,30):
         for y in range(10,30):
-            print('here', x/10, y/10, planner.collision_checker(x/10, y/10))
+            print('here', float(x)/10, float(y)/10, planner.collision_checker(float(x)/10, float(y)/10))
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
