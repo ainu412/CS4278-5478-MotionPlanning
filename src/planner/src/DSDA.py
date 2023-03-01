@@ -657,6 +657,9 @@ class DSDAPlanner(Planner):
         return (0 <= x < self.world_width and 0 <= y < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
 
+    def collision_checker_wrt_original_map(self, x, y):
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
 
 if __name__ == "__main__":
     # You can generate and save the plan using the code below
