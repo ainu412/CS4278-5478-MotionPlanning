@@ -424,9 +424,10 @@ class CSDAPlanner(Planner):
         # for y in range(199, -1 , -1):
         #     print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
+
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
         an initial pose and a goal pose.
@@ -616,16 +617,20 @@ if __name__ == "__main__":
     #############
 
     planner.set_goal(goal[0], goal[1])
-    # if planner.goal is not None:
-    #     planner.generate_plan(robot.get_current_discrete_state())
-    # print('action sequence', planner.action_seq)
-    # robot.publish_continuous_control(planner.action_seq, goal)
-    print('1.73, 2.85', planner.collision_checker(1.73, 2.85))
+    if planner.goal is not None:
+        planner.generate_plan(robot.get_current_discrete_state())
+    print('action sequence', planner.action_seq)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
-    print('inflation_ratio', planner.inflation_ratio)
-    for x in range(10,30):
-        for y in range(10,30):
-            print('here', float(x)/10, float(y)/10, planner.collision_checker(float(x)/10, float(y)/10))
+    # an ought to be collided point
+    # print('1.73, 2.85', planner.collision_checker(1.73, 2.85))
+
+
+    # check collision points around (2, 2)
+    # print('inflation_ratio', planner.inflation_ratio)
+    # for x in range(10,30):
+    #     for y in range(10,30):
+    #         print('here', float(x)/10, float(y)/10, planner.collision_checker(float(x)/10, float(y)/10))
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
