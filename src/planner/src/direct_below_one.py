@@ -587,6 +587,11 @@ if __name__ == "__main__":
     # print('action sequence', planner.action_seq)
     # robot.publish_continuous_control(planner.action_seq, goal)
     print('1.73, 2.85', planner.collision_checker(1.73, 2.85))
+
+    for x in range(10,30):
+        for y in range(10,30):
+            print(x/10, y/10, planner.collision_checker(x, y))
+
     # ##################
     # # rospy.init_node("lab1_robot_interface")
     # # interface = Lab1Interface()
