@@ -413,8 +413,11 @@ class CSDAPlanner(Planner):
                 # print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
                 if x == 0 and y == 0: # skip center
                     continue
-                if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
-                    nei_relative_position.append([x, y])
+                # inflation circle whose radius = inflation ratio
+                # if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
+                #     nei_relative_position.append([x, y])
+                # inflation square whose side lenght = 2 * inflation ratio
+                nei_relative_position.append([x, y])
         # print('self.inflation_ratio', self.inflation_ratio)
         # print('nei_relative_position', nei_relative_position)
         # when inflation radius is 3
