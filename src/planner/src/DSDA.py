@@ -400,7 +400,7 @@ class DSDAPlanner(Planner):
 
         for x in range(self.world_width):
             for y in range(self.world_height):
-                if not self.collision_checker_wrt_original_map(x, y):
+                if not self.collision_checker(x, y):
                     continue
 
                 # get neighbor position
@@ -416,8 +416,8 @@ class DSDAPlanner(Planner):
         self.aug_map = tuple(self.aug_map)
 
         # visualize aug map DONE!
-        # for y in range(199, -1 , -1):
-        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        for y in range(199, -1 , -1):
+            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
@@ -476,8 +476,12 @@ class DSDAPlanner(Planner):
                         and 0 <= nei_y_unit < self.unit_height):
                     continue
                 print('0')
-                if self.collision_checker(int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
+                if self.collision_checker_path(
+                        int(current_x_unit / self.resolution), int(current_y_unit / self.resolution),
+                        int(nei_x_unit / self.resolution), int(nei_y_unit / self.resolution)):
                     continue
+                # straight path collision checker
+
 
                 tmp_nei_g_score = g_score.get((current_x_unit, current_y_unit)) + 1
                 tmp_nei_f_score = tmp_nei_g_score + h_manhattan(nei_x_unit, nei_y_unit)
@@ -613,9 +617,20 @@ class DSDAPlanner(Planner):
         ### for DSPA
         ########### save action table for DSPA
 
-    def collision_checker_wrt_original_map(self, x, y):
-        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
-               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
+    def collision_checker_path(self, x1, y1, x2, y2):
+        if x1 == x2:
+            x = x1
+            for y in range(min(y1, y2), max(y1, y2) + 1):
+                if (0 <= x < self.world_width and 0 <= y < self.world_height) \
+                   and self.map[self.xy_to_1d_grid_index(x, y)] == 100:
+                    return True
+        elif y1 == y2:
+            y = y1
+            for x in range(min(x1, x2), max(x1, x2) + 1):
+                if (0 <= x < self.world_width and 0 <= y < self.world_height) \
+                   and self.map[self.xy_to_1d_grid_index(x, y)] == 100:
+                    return True
+        return False
 
     def collision_checker(self, x, y):
         """TODO: FILL ME!
