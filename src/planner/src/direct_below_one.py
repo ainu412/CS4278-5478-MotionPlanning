@@ -475,6 +475,9 @@ class CSDAPlanner(Planner):
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         x_world, y_world = self.unit_to_world(x, y)
+        print('x_world, y_world', x_world, y_world)
+        print('xy_to_1d_grid_index', self.xy_to_1d_grid_index(int(x_world), int(y_world)))
+        print('aug_map', self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))])
         return (0 <= x_world < self.world_width and 0 <= y_world < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))] == 100
 
@@ -517,11 +520,11 @@ if __name__ == "__main__":
     #############
 
     planner.set_goal(goal[0], goal[1])
-    if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
-    print('action sequence', planner.action_seq)
-    robot.publish_continuous_control(planner.action_seq, goal)
-
+    # if planner.goal is not None:
+    #     planner.generate_plan(robot.get_current_discrete_state())
+    # print('action sequence', planner.action_seq)
+    # robot.publish_continuous_control(planner.action_seq, goal)
+    print('1.73, 2.85', planner.collision_checker(1.73, 2.85))
     # ##################
     # # rospy.init_node("lab1_robot_interface")
     # # interface = Lab1Interface()
