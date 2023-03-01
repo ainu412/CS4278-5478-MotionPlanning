@@ -537,9 +537,9 @@ class CSDAPlanner(Planner):
         # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
         # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
         x_world, y_world = self.unit_to_world(x, y)
-        print('x_world, y_world', x_world, y_world)
-        print('xy_to_1d_grid_index', self.xy_to_1d_grid_index(int(x_world), int(y_world)))
-        print('aug_map', self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))])
+        # print('x_world, y_world', x_world, y_world)
+        # print('xy_to_1d_grid_index', self.xy_to_1d_grid_index(int(x_world), int(y_world)))
+        # print('aug_map', self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))])
         return (0 <= x_world < self.world_width and 0 <= y_world < self.world_height) \
                and self.aug_map[self.xy_to_1d_grid_index(int(x_world), int(y_world))] == 100
 
@@ -590,7 +590,7 @@ if __name__ == "__main__":
 
     for x in range(10,30):
         for y in range(10,30):
-            print(x/10, y/10, planner.collision_checker(x/10, y/10))
+            print(float(x/10), float(y/10), planner.collision_checker(float(x/10), float(y/10)))
 
     # ##################
     # # rospy.init_node("lab1_robot_interface")
