@@ -621,14 +621,12 @@ class DSDAPlanner(Planner):
         if x1 == x2:
             x = x1
             for y in range(min(y1, y2), max(y1, y2) + 1):
-                if (0 <= x < self.world_width and 0 <= y < self.world_height) \
-                   and self.map[self.xy_to_1d_grid_index(x, y)] == 100:
+                if self.collision_checker(x, y):
                     return True
         elif y1 == y2:
             y = y1
             for x in range(min(x1, x2), max(x1, x2) + 1):
-                if (0 <= x < self.world_width and 0 <= y < self.world_height) \
-                   and self.map[self.xy_to_1d_grid_index(x, y)] == 100:
+                if self.collision_checker(x, y):
                     return True
         return False
 
@@ -704,7 +702,7 @@ if __name__ == "__main__":
     # Forward! Forward! Turn left!
     # You should see an AssertionError since we didn't reach the goal.
     # mock_action_plan = [(0, -1), (0, -1), (1, 0), (1, 0), (0, -1), (0, 1), (0, -1), (1, 0), (1, 0)]
-
+    print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
     print('action sequence', planner.action_seq)
     robot.publish_discrete_control(planner.action_seq, goal)
     # TODO: FILL ME!
