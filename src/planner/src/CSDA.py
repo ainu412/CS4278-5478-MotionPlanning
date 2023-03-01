@@ -311,7 +311,27 @@ class RobotClient:
         )
         plan = [ContinuousAction(action[0], action[1]) for action in action_seq]
         proxy(plan)
-        # assert self.is_close_to_goal(goal), "Didn't reach the goal."
+        assert self.is_close_to_goal(goal), "Didn't reach the goal."
+
+    def publish_continuous_control_one(self, action):
+        """Publish the continuous controls.
+
+        TODO: FILL ME!
+
+        You should implement the ROS service request to execute the motion plan.
+
+        The service name is /lab1/continuous_action_sequence
+
+        The service type is ContinuousActionSequenceExec
+
+        Checkout the definitions in planner/msg/ and planner/srv/
+        """
+        proxy = rospy.ServiceProxy(
+            "/lab1/continuous_action_sequence",
+            ContinuousActionSequenceExec,
+        )
+        plan = [ContinuousAction(action[0], action[1])]
+        proxy(plan)
 
     def execute_policy(self, action_table, goal):
         """Execute a given policy in MDP.
@@ -623,13 +643,14 @@ if __name__ == "__main__":
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_continuous_state())
     print('action sequence', planner.action_seq)
+    robot.publish_continuous_control(planner.action_seq, goal)
 
     # publish each action one by one
-    for i, action in enumerate(planner.action_seq):
-        print('step', i)
-        print('actual path', robot.get_current_continuous_state())
-        print('planned path', planner.path_seq[i])
-        robot.publish_continuous_control([action], goal)
+    # for i, action in enumerate(planner.action_seq):
+    #     print('step', i)
+    #     print('actual path', robot.get_current_continuous_state())
+    #     print('planned path', planner.path_seq[i])
+    #     robot.publish_continuous_control_one(action)
 
     # an ought to be collided point
     # print('1.69, 2', planner.collision_checker(1.69, 2))
