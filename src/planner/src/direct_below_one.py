@@ -515,6 +515,10 @@ class CSDAPlanner(Planner):
     def unit_to_world(self, x_unit, y_unit):
         return int(x_unit / self.resolution), int(y_unit / self.resolution)
 
+    def collision_checker_wrt_original_map(self, x, y):
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
+
     def collision_checker(self, x, y):
         """TODO: FILL ME!
         unit collision checker
