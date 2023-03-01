@@ -389,6 +389,10 @@ class CSDAPlanner(Planner):
 
         self.aug_map = tuple(self.aug_map)
 
+
+        # visualize non aug map
+        for y in range(199, -1 , -1):
+            print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
         for y in range(199, -1 , -1):
             print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
@@ -578,7 +582,7 @@ if __name__ == "__main__":
     # print('action sequence', planner.action_seq)
     # robot.publish_discrete_control(planner.action_seq, goal)
 
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=4)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=15)
     #############
 
     planner.set_goal(goal[0], goal[1])
