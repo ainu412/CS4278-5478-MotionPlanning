@@ -618,12 +618,12 @@ if __name__ == "__main__":
 
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
+        planner.generate_plan(robot.get_current_continuous_state())
     print('action sequence', planner.action_seq)
 
     for i, action in enumerate(planner.action_seq):
         print('step', i)
-        print('actual path', robot.get_current_discrete_state()[:2])
+        print('actual path', robot.get_current_continuous_state())
         print('planned path', planner.path_seq[i])
         robot.publish_continuous_control([action], goal)
 
