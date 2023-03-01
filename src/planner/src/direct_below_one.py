@@ -623,7 +623,7 @@ if __name__ == "__main__":
     robot.publish_continuous_control(planner.action_seq, goal)
 
     # an ought to be collided point
-    # print('1.80, 1.71', planner.collision_checker(1.80, 1.71))
+    print('1.69, 2', planner.collision_checker(1.69, 2))
 
 
     # check collision points around (2, 2)
