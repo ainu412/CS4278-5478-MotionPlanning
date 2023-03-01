@@ -613,17 +613,18 @@ if __name__ == "__main__":
     # print('action sequence', planner.action_seq)
     # robot.publish_discrete_control(planner.action_seq, goal)
 
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=5)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=7)
     #############
 
     planner.set_goal(goal[0], goal[1])
-    if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
-    # print('action sequence', planner.action_seq)
-    robot.publish_continuous_control(planner.action_seq, goal)
+    # if planner.goal is not None:
+    #     planner.generate_plan(robot.get_current_discrete_state())
+    # # print('action sequence', planner.action_seq)
+    # robot.publish_continuous_control(planner.action_seq, goal)
 
     # an ought to be collided point
-    print('1.69, 2', planner.collision_checker(1.69, 2))
+    # print('1.69, 2', planner.collision_checker(1.69, 2))
+    # print('1.82, 1.6', planner.collision_checker(1.82, 1.6))
 
 
     # check collision points around (2, 2)
