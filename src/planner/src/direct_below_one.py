@@ -390,8 +390,8 @@ class CSDAPlanner(Planner):
         self.aug_map = tuple(self.aug_map)
 
         # visualize aug map DONE!
-        # for y in range(199, -1 , -1):
-        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        for y in range(199, -1 , -1):
+            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
     def generate_plan(self, init_pose):
         """TODO: FILL ME! This function generates the plan for the robot, given
