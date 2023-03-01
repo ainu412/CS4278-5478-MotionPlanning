@@ -578,7 +578,7 @@ if __name__ == "__main__":
     # print('action sequence', planner.action_seq)
     # robot.publish_discrete_control(planner.action_seq, goal)
 
-    planner = CSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    planner = CSDAPlanner(width, height, resolution, inflation_ratio=4)
     #############
 
     planner.set_goal(goal[0], goal[1])
