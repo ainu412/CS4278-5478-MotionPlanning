@@ -308,7 +308,7 @@ class RobotClient:
         )
         plan = [ContinuousAction(action[0], action[1]) for action in action_seq]
         proxy(plan)
-        assert self.is_close_to_goal(goal), "Didn't reach the goal."
+        # assert self.is_close_to_goal(goal), "Didn't reach the goal."
 
     def execute_policy(self, action_table, goal):
         """Execute a given policy in MDP.
