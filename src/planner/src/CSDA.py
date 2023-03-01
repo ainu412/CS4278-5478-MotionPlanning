@@ -425,11 +425,11 @@ class CSDAPlanner(Planner):
 
 
         # visualize non aug map
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
-        for y in range(199, -1 , -1):
-            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         ###################################<- end of FILL ME
 
     def generate_plan(self, init_pose):
@@ -500,7 +500,7 @@ class CSDAPlanner(Planner):
 
                 nei_x, nei_y, nei_theta = nei_pose
                 # make sure next x, y is within boundary and occupancy rate is below 100
-                print('nei_x, nei_y, nei_theta, collision', nei_x, nei_y, nei_theta, self.collision_checker(nei_x, nei_y))
+                # print('nei_x, nei_y, nei_theta, collision', nei_x, nei_y, nei_theta, self.collision_checker(nei_x, nei_y))
 
                 if not (0 <= nei_x < self.world_width
                         and 0 <= nei_y < self.world_height):
