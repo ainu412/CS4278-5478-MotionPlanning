@@ -662,7 +662,7 @@ if __name__ == "__main__":
         resolution = 0.05
 
     robot = RobotClient()
-    inflation_ratio = 3  # TODO: You should change this value accordingly
+    inflation_ratio = 5  # TODO: You should change this value accordingly
     planner = DSDAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     planner.set_goal(goal[0], goal[1])
     if planner.goal is not None:
