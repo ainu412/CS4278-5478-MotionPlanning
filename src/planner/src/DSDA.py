@@ -386,7 +386,7 @@ class DSDAPlanner(Planner):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
                 if x == 0 and y == 0: # skip center
                     continue
-                if euclidean_distance_to_center(x, y) <= inflation_ratio:
+                if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
                     nei_relative_position.append([x, y])
 
         # when inflation radius is 3
