@@ -384,11 +384,13 @@ class DSDAPlanner(Planner):
 
         for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
             for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
+                # print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
                 if x == 0 and y == 0: # skip center
                     continue
                 if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
                     nei_relative_position.append([x, y])
-
+        # print('self.inflation_ratio', self.inflation_ratio)
+        # print('nei_relative_position', nei_relative_position)
         # when inflation radius is 3
         # nei_relative_position = [[3, 0], [3, 1], [2, 2], [1, 3], [0, 3], [-1, 3],
         #                          [-2, -2], [-3, 1], [-3, 0], [-3, -1], [-2, 2],
@@ -400,7 +402,7 @@ class DSDAPlanner(Planner):
 
         for x in range(self.world_width):
             for y in range(self.world_height):
-                if not self.collision_checker(x, y):
+                if not self.collision_checker_wrt_original_map(x, y):
                     continue
 
                 # get neighbor position
@@ -415,13 +417,13 @@ class DSDAPlanner(Planner):
 
         self.aug_map = tuple(self.aug_map)
 
+
         # visualize non aug map
         for y in range(199, -1 , -1):
             print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
         for y in range(199, -1 , -1):
             print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
-
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
