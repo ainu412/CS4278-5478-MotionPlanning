@@ -510,10 +510,10 @@ class CSDAPlanner(Planner):
             if pose_is_close_to_goal(current_x, current_y):
                 break
 
-            for _ in range(20):
+            for _ in range(10):
                 # sample a neighboring node that can be reached within one timestep
                 # uniform sample v and w
-                v = np.random.uniform(0, 1)
+                v = np.random.uniform(0.5, 1)
                 w = np.random.uniform(-pi, pi)
 
                 # print('current_x, current_y, current_theta, v, w',current_x, current_y, current_theta, v, w)
