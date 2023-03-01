@@ -415,9 +415,13 @@ class DSDAPlanner(Planner):
 
         self.aug_map = tuple(self.aug_map)
 
+        # visualize non aug map
+        for y in range(199, -1 , -1):
+            print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
         # visualize aug map DONE!
-        # for y in range(199, -1 , -1):
-        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        for y in range(199, -1 , -1):
+            print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
