@@ -643,6 +643,7 @@ if __name__ == "__main__":
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_continuous_state())
     print('action sequence', planner.action_seq)
+    print('path sequence', planner.path_seq)
     robot.publish_continuous_control(planner.action_seq, goal)
 
     # publish each action one by one
