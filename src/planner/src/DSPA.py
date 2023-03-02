@@ -669,7 +669,7 @@ if __name__ == "__main__":
 
     i = 0
     # compute action sequence according to policy
-    while robot.get_current_discrete_state() != planner._get_goal_position():
+    while robot.get_current_discrete_state()[:2] != planner._get_goal_position():
         cur_loc = robot.get_current_discrete_state()
         nominal_action = planner.action_table[cur_loc]
 
@@ -687,6 +687,8 @@ if __name__ == "__main__":
               'action', actual_action)
         i += 1
         robot.publish_discrete_control_one(actual_action)
+
+    assert robot.get_current_discrete_state()[:2] == planner._get_goal_position(), "Didn't reach the goal."
 
     ## print utility table
 
