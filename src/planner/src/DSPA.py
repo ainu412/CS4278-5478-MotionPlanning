@@ -569,6 +569,7 @@ class DSPAPlanner(Planner):
 
         # compute optimal policy for each state
         self.action_table = dict()
+        print(11)
         for x_unit, y_unit, theta in self.states:
             print(0)
             q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
@@ -666,13 +667,12 @@ if __name__ == "__main__":
         resolution = 0.05
 
     robot = RobotClient()
-    inflation_ratio = 8  # TODO: You should change this value accordingly
+    inflation_ratio = 16  # TODO: You should change this value accordingly
     planner = DSPAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     planner.set_goal(goal[0], goal[1])
 
 
-    if planner.goal is not None:
-        planner.generate_plan(robot.get_current_discrete_state())
+    planner.generate_plan(robot.get_current_discrete_state())
 
     i = 0
     # compute action sequence according to policy
