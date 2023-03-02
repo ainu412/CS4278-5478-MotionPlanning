@@ -365,7 +365,7 @@ class RobotClient:
 
 class DSPAPlanner(Planner):
     def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3,
-                 max_iteration=100, discount_factor=0.9, converge_threshold=0.1):
+                 max_iteration=3, discount_factor=0.9, converge_threshold=0.1):
         """init function of the base planner. You should develop your own planner
         using this class as a base.
 
@@ -674,7 +674,7 @@ if __name__ == "__main__":
 
     planner.generate_plan(robot.get_current_discrete_state())
 
-    i = 0
+    # i = 0
     # compute action sequence according to policy
     # while robot.get_current_discrete_state()[:2] != planner._get_goal_position():
     #     cur_loc = robot.get_current_discrete_state()
