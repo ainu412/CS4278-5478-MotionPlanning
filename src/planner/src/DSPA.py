@@ -355,7 +355,7 @@ class RobotClient:
 
 class DSPAPlanner(Planner):
     def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3,
-                 max_iteration=100, discount_factor=0.9, converge_threshold=0.1):
+                 max_iteration=10, discount_factor=0.9, converge_threshold=0.1):
         """init function of the base planner. You should develop your own planner
         using this class as a base.
 
@@ -497,7 +497,7 @@ class DSPAPlanner(Planner):
             elif self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
                 return -100
             # free state
-            return -1
+            return -10
 
         # utility initialization for all states
         utility = dict()
