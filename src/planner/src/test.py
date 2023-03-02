@@ -1,10 +1,708 @@
+#!/usr/bin/env python
+import math
+from math import *
+import json
+import copy
+import argparse
+
+import rospy
 import numpy as np
-def main():
-    # a = [(0.8375819540396086, 1.282961499365797), (0.5085426431139091, 2.0778983944855307), (0.5536196823094937, 2.5205701166112835), (0.9199943854584743, -0.9411315746743512), (0.7622319243090125, 0.6995038201459494), (0.821792210507942, -2.0452237289946256), (0.9673641639536472, 0.6999999211850394), (0.8076765607826234, -0.1124536502503477), (0.7046835906220055, 0.45403446860404983), (0.9176624188796523, -2.5962508111617555), (0.979942594582214, 1.7991598673170826), (0.5873851465524504, -0.3995605138926708), (0.9425993832088013, 2.8206647581242397), (0.9462442845949979, 0.4000429790154536), (0.695927048469315, -0.5003294761081363), (0.8751936398517265, 0.19499336115338828), (0.8645392614714675, -0.5304765485362535), (0.749382617814909, 0.02320360599742477), (0.5728196467499862, -1.0569021657461124), (0.6261161084409657, 0.3502572548313787), (0.5477240134755581, 0.23202002891126883), (0.8897988948278313, 0.900965546750089), (0.7625951572177387, -0.816552814843285), (0.9711565895487422, -1.3032735481283346), (0.6910220927066018, 1.937091633367249), (0.847350277199584, -0.441563421738961), (0.7348915242786314, -0.9304835555875446), (0.7721546976068661, -0.1976066663317133), (0.8310415031605662, 1.3830084078951002), (0.5805163069876351, -0.5074456508275924), (0.7111931422217151, -1.123850076580191), (0.8611437229214102, 0.6714654987078723), (0.9445772006028121, 0.9584219766421551), (0.7757288947800431, 0.2462755266576111), (0.5830300089658425, -0.9152664076444323), (0.7423361021140964, 0.357535748658635), (0.7020856694468236, -0.7729587314306681), (0.614122490620082, 0.6116757286073389), (0.5142192162395782, -0.903431291529428), (0.977064299737891, 1.6172969900001997), (0.7136749716474451, -1.4866457895632745), (0.8731194800188136, -0.19182534349323754), (0.5697123256952165, -1.5637475881282055), (0.9502350130539239, 1.5641829154029079), (0.5222941060584925, 0.7031012230333467), (0.515176764673472, -1.8942442788686065), (0.9336683941081144, 1.3898308201455167), (0.6255347893285053, -0.9968436063492625), (0.7529080048029609, -1.5184984961530417), (0.6693798060096185, 2.100817340111483), (0.6125746883488734, -1.369532913013388), (0.888990513610899, 0.8447779599659175), (0.5597537346330606, 2.2382532903259813), (0.5203742332495866, 0.40041904651282456), (0.9519434924609879, -0.9571165751933677), (0.987362320378844, 1.0657705819736982), (0.6436688371019443, -0.3036879395575145), (0.6167362602658277, 1.0468778989390621), (0.7636243730699985, -2.1069109784523654), (0.6634648808458548, 1.8885651704972233), (0.9374152724594699, -1.3491065668890407), (0.7502974592853797, 1.1957400006921697), (0.5546317828259281, 0.04025871757714272), (0.9886185501001854, -0.4761168943140439), (0.5951436599957987, -0.4221942597917465), (0.6321493959213916, 0.0526053791544463), (0.5072217947636848, 0.1880024479248532), (0.5756422319152656, 0.7116647273857146), (0.750171005358119, -1.3986000984235607), (0.5909651442457298, 2.0242137263303874), (0.8769863383553079, -1.0480926920889395), (0.6181079394292983, 1.088461779398302), (0.8740314529912393, -0.09268561307071677), (0.8669889465177842, -0.7353843719674376), (0.9959566749274864, 1.012528409574724), (0.5884740471296286, -0.7969571697855531), (0.8109620621386839, -0.13467904445564294), (0.6614026632230465, -1.3921097568993592), (0.7813403991866992, 2.370704744874927), (0.9226923356142818, -1.9138974246389824), (0.7987336020829231, 1.3288971243597274), (0.7866789898472357, -1.5183585612276167), (0.8687170206585894, 0.3643571197806956), (0.7479207579732201, 1.3763351698878905), (0.9499675610292806, -1.5295529456949701), (0.6864339026476711, 2.143961845112754), (0.5260499204581152, 0.87163447195495), (0.6483193720857257, -0.4280373636796093), (0.9486087109816665, -0.7432883698837212), (0.6089384911358865, 1.0782344347965944), (0.5751003268691303, -0.9271931413371268), (0.7255434806525585, 0.8224725839398372), (0.6364893046239228, -0.9977044762489657), (0.9936288618173508, 1.0963277039690364), (0.6776062023857194, -0.6881573042154567), (0.5489745439042946, -0.19592867685212623), (0.9545726557835281, 0.7678902823868095), (0.7271549076008259, -0.9356056440338616), (0.5157532092051473, 0.869658824891979), (0.8343751703871592, 0.30160856632650646), (0.9732222025534978, -0.34756713309230625), (0.8518616319170733, -0.08052936238429798), (0.9037232085220468, -0.5816867946632587), (0.6349784158958967, 0.9575414765376724), (0.7742829735875927, -0.9896316295681515), (0.6355915272010351, 0.6263489137328295), (0.6455349247167224, -0.11997918802750851), (0.7248355260783154, 0.46836274717827564), (0.7433499945300291, -0.8653447580169984), (0.8791309230029218, 0.35677761992008916), (0.9942123385238084, 0.10167403274909637), (0.6367354739220147, -0.5321374854167926), (0.5054967894480971, 0.8239990961757062), (0.5032575770888399, -0.3330856343271109), (0.5850640275987087, 0.23151162496885247), (0.7297393675774763, -0.5045322324094097), (0.7937745074973138, 0.5989367027012218), (0.7786163875097631, -0.5810453903014121), (0.6870483451179714, -0.07278896602192919), (0.551550422471758, 1.0085937814118457)]
+from geometry_msgs.msg import *
+from nav_msgs.msg import *
+from sensor_msgs.msg import *
+from const import *
 
-    a = [(0.5691719817616223, 2.9587850055057405), (0.5751358099829431, 1.2278322536002424), (0.5620173651227762, 1.4219768724149002), (0.7862740867281652, -3.080675913157957), (0.7440152508034423, 2.985340844111364), (0.9303183502698349, -2.2628787215755044), (0.603208800607204, 0.5453590139965012), (0.7868432476018706, 1.0717513109529078), (0.9104602112794384, -1.3929980690478738), (0.8660582824510709, 0.5604544462663439), (0.9388791131632616, 0.13186525401536153), (0.540187156750487, 1.5328071976870827), (0.5693561035727666, -0.1368339132684797), (0.6858757839507998, 0.99503948698261), (0.765101402276577, -1.073376283437511), (0.7875123190122479, 1.8713162033982265), (0.8796481097283213, -1.8213965406967643), (0.7417924265130373, 1.0551750606010897), (0.6389592486829133, -0.42339466248542657), (0.533366378196199, 0.638964898590292), (0.7358609028747969, -0.002970561585832421), (0.5514036153633741, -1.7191358497335343), (0.5469175737818901, 1.0844120236616996), (0.8868903362785607, 0.52920716154423), (0.8214998882074521, -0.04279761088256118), (0.7136231115290697, -0.21610854455482098), (0.6651115498170463, -0.43259864046989893), (0.9009810650901084, 2.4163511814348153), (0.6080045075414089, -0.7430452674272834), (0.5006180247723414, 0.4179631892046807), (0.7561059994852772, -0.732848485237672), (0.9350684280918156, 0.9635631357132093), (0.9052670250724488, -0.9936158911115793), (0.8220202230854468, 1.149427060545917), (0.9279714388460266, -1.0390702498785447), (0.52441435755264, 1.1642646661954394), (0.7408558579459301, -0.8019066752088007), (0.5755418086996678, 0.4984087841029843), (0.6189816484324768, -0.2801572457727892), (0.560892311791521, 0.17775394214329676), (0.7021625336218165, -0.15280593411798948), (0.8559486319315399, 0.0018353052982353901), (0.8274439524827895, -0.3953637392953069), (0.7567185126910652, 1.386444202245925)]
-    result = np.array(a)
-    np.savetxt("CSDA_com1building_{}_{}.txt".format(20, 1), result, fmt="%.2e")
+from planner.msg import ContinuousAction, DiscreteAction, ContinuousState, DiscreteState
+from planner.srv import (
+    DiscreteActionSequenceExec,
+    ContinuousActionSequenceExec,
+    DiscreteActionStochasticExec,
+)
 
-if __name__ == '__main__':
-    main()
+ROBOT_SIZE = 0.2552  # width and height of robot in terms of stage unit
+
+### move to new class
+
+def dump_action_table(action_table, filename):
+    """dump the MDP policy into a json file
+
+    Arguments:
+        action_table {dict} -- your mdp action table. It should be of form {(1,2,0): (1, 0), ...}
+        filename {str} -- output filename
+    """
+    tab = dict()
+    for k, v in action_table.items():
+        key = [str(int(i)) for i in k]
+        key = ",".join(key)
+        tab[key] = v
+
+    with open(filename, 'w') as fout:
+        json.dump(tab, fout)
+
+
+class Planner:
+    def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3):
+        """init function of the base planner. You should develop your own planner
+        using this class as a base.
+
+        For standard mazes, width = 200, height = 200, resolution = 0.05.
+        For COM1 map, width = 2500, height = 983, resolution = 0.02
+
+        Arguments:
+            world_width {int} -- width of map in terms of pixels
+            world_height {int} -- height of map in terms of pixels
+            world_resolution {float} -- resolution of map
+
+        Keyword Arguments:
+            inflation_ratio {int} -- [description] (default: {3})
+        """
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+
+        self.unit_width = int(world_width * world_resolution)
+        self.unit_height = int(world_height * world_resolution)
+
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
+
+    def setup_map(self):
+        """Get the occupancy grid and inflate the obstacle by some pixels.
+
+        You should implement the obstacle inflation yourself to handle uncertainty.
+        """
+        # Hint: search the ROS message defintion of OccupancyGrid
+        occupancy_grid = rospy.wait_for_message('/map', OccupancyGrid)
+        self.map = occupancy_grid.data
+
+        # TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
+
+        # you should inflate the map to get self.aug_map
+        self.aug_map = copy.deepcopy(self.map)
+
+    def _get_goal_position(self):
+        goal_position = self.goal.pose.position
+        return (goal_position.x, goal_position.y)
+
+    def set_goal(self, x, y, theta=0):
+        """set the goal of the planner
+
+        Arguments:
+            x {int} -- x of the goal
+            y {int} -- y of the goal
+
+        Keyword Arguments:
+            theta {int} -- orientation of the goal; we don't consider it in our planner (default: {0})
+        """
+        a = PoseStamped()
+        a.pose.position.x = x
+        a.pose.position.y = y
+        a.pose.orientation.z = theta
+        self.goal = a
+
+    def generate_plan(self, init_pose):
+        """TODO: FILL ME! This function generates the plan for the robot, given
+        an initial pose and a goal pose.
+
+        You should store the list of actions into self.action_seq, or the policy
+        into self.action_table.
+
+        In discrete case (task 1 and task 3), the robot has only 4 heading directions
+        0: east, 1: north, 2: west, 3: south
+
+        Each action could be: (1, 0) FORWARD, (0, 1) LEFT 90 degree, (0, -1) RIGHT 90 degree
+
+        In continuous case (task 2), the robot can have arbitrary orientations
+
+        Each action could be: (v, \omega) where v is the linear velocity and \omega is the angular velocity
+        """
+        self.action_seq = []
+
+    def collision_checker(self, x, y):
+        """TODO: FILL ME!
+        You should implement the collision checker.
+        Hint: you should consider the augmented map and the world size
+
+        Arguments:
+            x {float} -- current x of robot
+            y {float} -- current y of robot
+
+        Returns:
+            bool -- True for collision, False for non-collision
+        """
+
+        return False
+
+    def motion_predict(self, x, y, theta, v, w, dt=0.5, frequency=10):
+        """Predict the next pose of the robot given controls. Returns None if
+        the robot collide with the wall.
+
+        The robot dynamics is provided in the assignment description.
+
+        Arguments:
+            x {float} -- current x of robot
+            y {float} -- current y of robot
+            theta {float} -- current theta of robot
+            v {float} -- linear velocity
+            w {float} -- angular velocity
+
+        Keyword Arguments:
+            dt {float} -- time interval. DO NOT CHANGE (default: {0.5})
+            frequency {int} -- simulation frequency. DO NOT CHANGE (default: {10})
+
+        Returns:
+            tuple -- next x, y, theta; return None if has collision
+        """
+        num_steps = int(dt * frequency)
+        dx = 0
+        dy = 0
+        for i in range(num_steps):
+            if w != 0:
+                dx = - v / w * np.sin(theta) + v / w * \
+                     np.sin(theta + w / frequency)
+                dy = v / w * np.cos(theta) - v / w * \
+                     np.cos(theta + w / frequency)
+            else:
+                dx = v * np.cos(theta) / frequency
+                dy = v * np.sin(theta) / frequency
+            x += dx
+            y += dy
+
+            if not (0 <= x < self.unit_width and 0 <= y < self.unit_height):
+                return None
+            if self.collision_checker(int(x / self.resolution), int(y / self.resolution)):
+                return None
+            theta += w / frequency
+        return x, y, theta
+
+    def discrete_motion_predict(self, x, y, theta, v, w, dt=0.5, frequency=10):
+        """Discrete version of the motion predict.
+
+        Note that since the ROS simulation interval is set to be 0.5 sec and the
+        robot has a limited angular speed, to achieve 90 degree turns, we have
+        to execute two discrete actions consecutively. This function wraps the
+        discrete motion predict.
+
+        Please use it for your discrete planner.
+
+        Arguments:
+            x {int} -- current x of robot
+            y {int} -- current y of robot
+            theta {int} -- current theta of robot
+            v {int} -- linear velocity
+            w {int} -- angular velocity (0, 1, 2, 3)
+
+        Keyword Arguments:
+            dt {float} -- time interval. DO NOT CHANGE (default: {0.5})
+            frequency {int} -- simulation frequency. DO NOT CHANGE (default: {10})
+
+        Returns:
+            tuple -- next x, y, theta; return None if has collision or out of boundary
+        """
+        w_radian = w * np.pi / 2
+        first_step = self.motion_predict(x, y, theta * np.pi / 2, v, w_radian)
+        if first_step:
+            second_step = self.motion_predict(
+                first_step[0], first_step[1], first_step[2], v, w_radian)
+            if second_step:
+                return (round(second_step[0]), round(second_step[1]), round(second_step[2] / (np.pi / 2)) % 4)
+        return None
+
+
+class RobotClient:
+    """A class to interface with the (simulated) robot.
+
+    You can think of this as the "driver" program provided by the robot manufacturer ;-)
+    """
+
+    def __init__(self):
+        self._cstate = None
+        self.sb_cstate = rospy.Subscriber(
+            "/lab1/continuous_state", ContinuousState, self._cstate_callback
+        )
+        self._dstate = None
+        self.sb_dstate = rospy.Subscriber(
+            "/lab1/discrete_state", DiscreteState, self._dstate_callback
+        )
+
+    def _cstate_callback(self, msg):
+        """Callback of the subscriber."""
+        self._cstate = msg
+
+    def get_current_continuous_state(self):
+        """Get the current continuous state.
+
+        Returns:
+            tuple -- x, y, \theta, as defined in the instruction document.
+        """
+        return (self._cstate.x, self._cstate.y, self._cstate.theta)
+
+    def _dstate_callback(self, msg):
+        self._dstate = msg
+
+    def get_current_discrete_state(self):
+        """Get the current discrete state.
+
+        Returns:
+            tuple -- x, y, \theta, as defined in the instruction document.
+        """
+        return (self._dstate.x, self._dstate.y, self._dstate.theta)
+
+    def _d_from_target(self, target_pose):
+        """Compute the distance from current pose to the target_pose.
+
+        Arguments:
+            pose {list} -- robot pose
+
+        Returns:
+            float -- distance to the target_pose
+        """
+        pose = self.get_current_continuous_state()
+        return math.sqrt(
+            (pose[0] - target_pose[0]) ** 2 + (pose[1] - target_pose[1]) ** 2
+        )
+
+    def is_close_to_goal(self, goal):
+        """Check if close enough to the given goal.
+
+        Arguments:
+            pose {list} -- robot post
+
+        Returns:
+            bool -- goal or not
+        """
+        return self._d_from_target(goal) < 0.3
+
+    def publish_discrete_control(self, action_seq, goal):
+        """Publish the discrete controls"""
+        proxy = rospy.ServiceProxy(
+            "/lab1/discrete_action_sequence",
+            DiscreteActionSequenceExec,
+        )
+        plan = [DiscreteAction(action) for action in action_seq]
+        proxy(plan)
+        assert self.is_close_to_goal(goal), "Didn't reach the goal."
+
+    def publish_discrete_control_one(self, action):
+        """Publish the discrete controls"""
+        proxy = rospy.ServiceProxy(
+            "/lab1/discrete_action_sequence",
+            DiscreteActionSequenceExec,
+        )
+        plan = [DiscreteAction(action)]
+        proxy(plan)
+        # assert self.is_close_to_goal(goal), "Didn't reach the goal."
+
+    def publish_continuous_control(self, action_seq, goal):
+        """Publish the continuous controls.
+
+        TODO: FILL ME!
+
+        You should implement the ROS service request to execute the motion plan.
+
+        The service name is /lab1/continuous_action_sequence
+
+        The service type is ContinuousActionSequenceExec
+
+        Checkout the definitions in planner/msg/ and planner/srv/
+        """
+        pass
+        assert self.is_close_to_goal(goal)
+
+    def publish_continuous_control_one(self, action):
+        """Publish the continuous controls.
+
+        TODO: FILL ME!
+
+        You should implement the ROS service request to execute the motion plan.
+
+        The service name is /lab1/continuous_action_sequence
+
+        The service type is ContinuousActionSequenceExec
+
+        Checkout the definitions in planner/msg/ and planner/srv/
+        """
+        proxy = rospy.ServiceProxy(
+            "/lab1/continuous_action_sequence",
+            ContinuousActionSequenceExec,
+        )
+        plan = [ContinuousAction(action[0], action[1])]
+        proxy(plan)
+
+    def execute_policy(self, action_table, goal):
+        """Execute a given policy in MDP.
+
+        Due to the stochastic dynamics, we cannot execute the motion plan
+        without feedback. Hence, every time we execute a discrete action, we
+        query the current state by `get_current_discrete_state()`.
+
+        You don't have to worry about the stochastic dynamics; it is implemented
+        in the simulator. You only need to send the discrete action.
+        """
+        # TODO: FILL ME!
+        # Instantiate the ROS service client
+        # Service name: /lab1/discrete_action_stochastic
+        # Service type: DiscreteActionStochasticExec
+        # Checkout the definitions in planner/msg/ and planner/srv/
+        while not self.is_close_to_goal(goal):
+            current_state = self.get_current_discrete_state()
+            action = action_table[current_state]
+            # TODO: FILL ME!
+            # Put the action into proper ROS request and send it
+        rospy.sleep(1)
+        assert self.is_close_to_goal(goal)
+
+
+class DSPAPlanner(Planner):
+    def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3,
+                 max_iteration=100, discount_factor=0.9, converge_threshold=0.1):
+        """init function of the base planner. You should develop your own planner
+        using this class as a base.
+
+        For standard mazes, width = 200, height = 200, resolution = 0.05.
+        For COM1 map, width = 2500, height = 983, resolution = 0.02
+
+        Arguments:
+            world_width {int} -- width of map in terms of pixels
+            world_height {int} -- height of map in terms of pixels
+            world_resolution {float} -- resolution of map
+
+        Keyword Arguments:
+            inflation_ratio {int} -- [description] (default: {3})
+        """
+        self.map = None
+        self.pose = None
+        self.goal = None
+        self.action_seq = None  # output
+        self.aug_map = None  # occupancy grid with inflation
+        self.action_table = {}
+
+        self.unit_width = int(world_width * world_resolution)
+        self.unit_height = int(world_height * world_resolution)
+
+        self.world_width = world_width
+        self.world_height = world_height
+        self.resolution = world_resolution
+
+        ######### ->newly added for DSPAPlanne
+        self.states = None
+        self.max_iteration = max_iteration
+        self.discount_factor = discount_factor
+        self.converge_threshold = converge_threshold
+        self.utility = None
+        ######### <-
+
+        self.inflation_ratio = inflation_ratio
+        self.setup_map()
+        rospy.sleep(1)
+
+    def setup_map(self):
+        """Get the occupancy grid and inflate the obstacle by some pixels.
+
+        You should implement the obstacle inflation yourself to handle uncertainty.
+        """
+        # Hint: search the ROS message defintion of OccupancyGrid
+        occupancy_grid = rospy.wait_for_message('/map', OccupancyGrid)
+        self.map = occupancy_grid.data
+        # you should inflate the map to get self.aug_map
+        self.aug_map = copy.deepcopy(self.map)
+
+        ####################### TODO: FILL ME! implement obstacle inflation function and define self.aug_map = new_mask
+        # print out self.map to see what the data format is like
+        # int8[] array
+        # neighboring nodes whose rounded up to integer Euclidean distance to current center node is less than or equal to 3
+        self.aug_map = list(self.aug_map)
+        nei_relative_position = []
+
+        def euclidean_distance_to_center(x, y):
+            return np.round(np.sqrt(x ** 2 + y ** 2))
+
+        for x in range(-self.inflation_ratio, self.inflation_ratio + 1):
+            for y in range(-self.inflation_ratio, self.inflation_ratio + 1):
+                # print('x, y, euclidean', x, y, euclidean_distance_to_center(x, y))
+                if x == 0 and y == 0: # skip center
+                    continue
+                if euclidean_distance_to_center(x, y) <= self.inflation_ratio:
+                    nei_relative_position.append([x, y])
+        # print('self.inflation_ratio', self.inflation_ratio)
+        # print('nei_relative_position', nei_relative_position)
+        # when inflation radius is 3
+        # nei_relative_position = [[3, 0], [3, 1], [2, 2], [1, 3], [0, 3], [-1, 3],
+        #                          [-2, -2], [-3, 1], [-3, 0], [-3, -1], [-2, 2],
+        #                          [-1, -3], [0, -3], [1, -3], [2, -2], [3, -1],
+        #                          [2, -1], [2, 0], [2, 1], [1, -2], [1, -1], [1, 0], [1, 1], [1, 2],
+        #                          [0, -2], [0, -1], [0, 1], [0, 2],
+        #                          [-1, -2], [-1, -1], [-1, 0], [-1, 1], [-1, 2],
+        #                          [-2, -1], [-2, 0], [-2, 1]]
+
+        for x in range(self.world_width):
+            for y in range(self.world_height):
+                if not self.collision_checker_wrt_original_map(x, y):
+                    continue
+
+                # get neighbor position
+                for nei_relative_x, nei_relative_y in nei_relative_position:
+                    nei_x, nei_y = x + nei_relative_x, y + nei_relative_y
+                    # if neighboring node not within map boundary, then skip
+                    if not (0 <= nei_x < self.world_width
+                            and 0 <= nei_y < self.world_height):
+                        continue
+                    # update neighbor value to be max(center current position occupancy value, neighbor occupancy value)
+                    self.aug_map[self.xy_to_1d_grid_index(nei_x, nei_y)] = 100
+
+        self.aug_map = tuple(self.aug_map)
+
+        # visualize non aug map
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+        # visualize aug map DONE!
+        # for y in range(199, -1 , -1):
+        #     print("".join(['+' if self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100 else ' ' for x in range(200)]))
+
+        # all non occupied (free) grid are possible state
+        self.states = []
+        for x_unit in range(self.unit_width):
+            for y_unit in range(self.unit_height):
+                if not self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
+                    for theta in [0, 1, 2, 3]:
+                        self.states.append((x_unit, y_unit, theta))
+
+        ###################################<- end of FILL ME
+
+    def xy_to_1d_grid_index(self, x, y):
+        return y * self.world_width + x
+
+    def generate_plan(self, init_pose):
+        """TODO: FILL ME! This function generates the plan for the robot, given
+        an initial pose and a goal pose.
+
+        You should store the list of actions into self.action_seq, or the policy
+        into self.action_table.
+
+        In discrete case (task 1 and task 3), the robot has only 4 heading directions
+        0: east, 1: north, 2: west, 3: south
+
+        Each action could be: (1, 0) FORWARD, (0, 1) LEFT 90 degree, (0, -1) RIGHT 90 degree
+
+        In continuous case (task 2), the robot can have arbitrary orientations
+
+        Each action could be: (v, \omega) where v is the linear velocity and \omega is the angular velocity
+        """
+
+        ############################################-> start of FILL ME!
+        def reward_func(x_unit, y_unit):
+            # goal
+            if (x_unit, y_unit) == self._get_goal_position():
+                return 100
+            # occupied state, can set reward according to occupancy rate; but now simplified
+            # elif self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
+            #     return -100
+            # free state
+            return -50
+
+        # utility initialization for all states
+        utility = dict()
+        for s in self.states:
+            utility[s] = 0
+
+        # compute utility for each state
+        for _ in range(self.max_iteration):
+            delta = 0.0
+            for x_unit, y_unit, theta in self.states:
+                # terminal state, goal state
+                if (x_unit, y_unit) == self._get_goal_position():
+                    continue
+
+                q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
+                for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
+                    if action == 'LEFT':
+                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, 1)
+                        if nei_pose is None:
+                            continue
+                        nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                        reward = reward_func(nei_x_unit, nei_y_unit)
+                        q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
+                    elif action == 'RIGHT':
+                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -1)
+                        if nei_pose is None:
+                            continue
+                        nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                        reward = reward_func(nei_x_unit, nei_y_unit)
+                        q['RIGHT'] = reward + self.discount_factor * utility[nei_pose]
+                    elif action == 'STAY':
+                        nei_pose = x_unit, y_unit, theta
+                        nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                        reward = reward_func(nei_x_unit, nei_y_unit)
+                        q['STAY'] = reward + self.discount_factor * utility[nei_pose]
+                    elif action == 'FORWARD':
+                        q_sum = 0
+                        has_nei_state = False
+                        for v, w, p in [(1, 0, 0.9), (pi/2, 1, 0.05), (pi/2, -1, 0.05)]:
+                            nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, v, w)
+                            if nei_pose is None:
+                                continue
+                            has_nei_state = True
+                            nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                            reward = reward_func(nei_x_unit, nei_y_unit)
+                            q_sum += p * (reward + self.discount_factor * utility[nei_pose])
+                        if has_nei_state:
+                            q['FORWARD'] = q_sum
+                tmp_utility = max(q.values())
+                delta = max(0, abs(tmp_utility - utility[x_unit, y_unit, theta]))
+                utility[x_unit, y_unit, theta] = tmp_utility
+
+            if delta < self.converge_threshold:
+                break
+
+        # compute optimal policy for each state
+        self.action_table = dict()
+        for x_unit, y_unit, theta in self.states:
+            q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
+            for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
+                if action == 'LEFT':
+                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, 1)
+                    if nei_pose is None:
+                        continue
+                    nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                    reward = reward_func(nei_x_unit, nei_y_unit)
+                    q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
+                elif action == 'RIGHT':
+                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -1)
+                    if nei_pose is None:
+                        continue
+                    nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                    reward = reward_func(nei_x_unit, nei_y_unit)
+                    q['RIGHT'] = reward + self.discount_factor * utility[nei_pose]
+                elif action == 'STAY':
+                    nei_pose = x_unit, y_unit, theta
+                    nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                    reward = reward_func(nei_x_unit, nei_y_unit)
+                    q['STAY'] = reward + self.discount_factor * utility[nei_pose]
+                elif action == 'FORWARD':
+                    q_sum = 0
+                    has_nei_state = False
+                    for v, w, p in [(1, 0, 0.9), (pi / 2, 1, 0.05), (pi / 2, -1, 0.05)]:
+                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, v, w)
+                        if nei_pose is None:
+                            continue
+                        has_nei_state = True
+                        nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                        reward = reward_func(nei_x_unit, nei_y_unit)
+                        q_sum += p * (reward + self.discount_factor * utility[nei_pose])
+                    if has_nei_state:
+                        q['FORWARD'] = q_sum
+            # string to action list[2]
+            action_str2li = {'LEFT': [0, 1], 'RIGHT': [0, -1], 'FORWARD': [1, 0], 'STAY': [0, 0]}
+
+            self.action_table[(x_unit, y_unit, theta)] = action_str2li[max(q, key=q.get)]
+
+
+        self.utility = utility
+
+
+    def collision_checker(self, x, y):
+        """TODO: FILL ME!
+        You should implement the collision checker.
+        Hint: you should consider the augmented map and the world size
+
+        Arguments:
+            x {int} -- current x of robot
+            y {int} -- current y of robot
+
+        Returns:
+            bool -- True for collision, False for non-collision
+        """
+        # print('augmap[400:600]', self.aug_map[400:600])
+        # print('x', x, 'y', 'y')
+        # print('self.xy_to_1d_grid_index(x, y)', self.xy_to_1d_grid_index(x, y))
+        # print('self.aug_map[self.xy_to_1d_grid_index(x, y)]', self.aug_map[self.xy_to_1d_grid_index(x, y)])
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.aug_map[self.xy_to_1d_grid_index(x, y)] == 100
+
+    def collision_checker_wrt_original_map(self, x, y):
+        return (0 <= x < self.world_width and 0 <= y < self.world_height) \
+               and self.map[self.xy_to_1d_grid_index(x, y)] == 100
+
+
+if __name__ == "__main__":
+    # You can generate and save the plan using the code below
+    rospy.init_node('planner')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--goal', type=str, default='1,8',
+                        help='goal position')
+    parser.add_argument('--com', type=int, default=0,
+                        help="if the map is com1 map")
+    args = parser.parse_args()
+
+    try:
+        goal = [int(pose) for pose in args.goal.split(',')]
+    except:
+        raise ValueError("Please enter correct goal format")
+
+    if args.com:
+        width = 2500
+        height = 983
+        resolution = 0.02
+    else:
+        width = 200
+        height = 200
+        resolution = 0.05
+
+    robot = RobotClient()
+    inflation_ratio = 5  # TODO: You should change this value accordingly
+    planner = DSPAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
+    planner.set_goal(goal[0], goal[1])
+
+
+    if planner.goal is not None:
+        planner.generate_plan(robot.get_current_discrete_state())
+
+    # i = 0
+    # # compute action sequence according to policy
+    # while robot.get_current_discrete_state()[:2] != planner._get_goal_position():
+    #     cur_loc = robot.get_current_discrete_state()
+    #     nominal_action = planner.action_table[cur_loc]
+    #
+    #     # if nominal_action == [1, 0]:
+    #     #     idx = np.random.choice(3, size=1, p=[0.9, 0.05, 0.05])[0]
+    #     #     actual_actions_list = [[1, 0], [pi / 2, 1], [pi / 2, -1]]
+    #     #     actual_action = actual_actions_list[idx]
+    #     # else:
+    #     #     actual_action = nominal_action
+    #
+    #     # assume perfect control
+    #     actual_action = nominal_action
+    #     print('step', i, 'loc', cur_loc,
+    #           'cur loc utility', planner.utility[cur_loc],
+    #           'action', actual_action)
+    #     i += 1
+    #     robot.publish_discrete_control_one(actual_action)
+    #
+    # assert robot.get_current_discrete_state()[:2] == planner._get_goal_position(), "Didn't reach the goal."
+
+    ## print utility table
+
+    ####################### <- end of Executing
+
+    # TODO: FILL ME!
+    # After you implement your planner, send the plan/policy generated by your
+    # planner using appropriate execution calls.
+    # e.g., robot.publish_discrete_control(planner.action_seq, goal)
+
+    # save your action sequence
+    # result = np.array(planner.action_seq)
+    # np.savetxt("DSPA_map1_{}_{}.txt".format(goal[0], goal[1]), result, fmt="%.2e")
+
+
+    # for MDP, please dump your policy table into a json file
+    dump_action_table(planner.action_table, "DSPA_map1_{}_{}.json".format(goal[0], goal[1]))
