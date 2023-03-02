@@ -172,7 +172,7 @@ class Planner:
             x += dx
             y += dy
 
-            if self.collision_checker(x, y):
+            if self.collision_checker(int(x / self.resolution), int(y / self.resolution)):
                 return None
             theta += w / frequency
         return x, y, theta
