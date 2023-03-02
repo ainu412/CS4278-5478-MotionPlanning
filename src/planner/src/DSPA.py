@@ -293,6 +293,16 @@ class RobotClient:
         proxy(plan)
         assert self.is_close_to_goal(goal), "Didn't reach the goal."
 
+    def publish_discrete_control_one(self, action):
+        """Publish the discrete controls"""
+        proxy = rospy.ServiceProxy(
+            "/lab1/discrete_action_sequence",
+            DiscreteActionSequenceExec,
+        )
+        plan = [DiscreteAction(action)]
+        proxy(plan)
+        # assert self.is_close_to_goal(goal), "Didn't reach the goal."
+
     def publish_continuous_control(self, action_seq, goal):
         """Publish the continuous controls.
 
@@ -667,7 +677,8 @@ if __name__ == "__main__":
         # assume perfect control
         actual_action = nominal_action
         print('step', i, 'action', actual_action)
-        robot.publish_continuous_control_one(actual_action)
+        i += 1
+        robot.publish_discrete_control_one(actual_action)
 
     ####################### <- end of Executing
 
