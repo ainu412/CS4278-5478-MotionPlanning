@@ -551,8 +551,11 @@ class DSPAPlanner(Planner):
                             nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, v, w)
                             if nei_pose is None:
                                 continue
+
                             has_nei_state = True
                             nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                            if not (0 <= nei_x_unit < self.unit_width and 0 <= nei_y_unit < self.unit_height):
+                                return None
                             reward = reward_func(nei_x_unit, nei_y_unit)
                             q_sum += p * (reward + self.discount_factor * utility[nei_pose])
                         if has_nei_state:
@@ -597,6 +600,9 @@ class DSPAPlanner(Planner):
                             continue
                         has_nei_state = True
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
+                        if not (0 <= nei_x_unit < self.unit_width and 0 <= nei_y_unit < self.unit_height):
+                            return None
+                        
                         reward = reward_func(nei_x_unit, nei_y_unit)
                         q_sum += p * (reward + self.discount_factor * utility[nei_pose])
                     if has_nei_state:
