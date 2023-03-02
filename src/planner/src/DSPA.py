@@ -493,11 +493,11 @@ class DSPAPlanner(Planner):
             # goal
             if (x_unit, y_unit) == self._get_goal_position():
                 return 100
-            # occupied state
-            elif self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
-                return -100
+            # occupied state, can set reward according to occupancy rate; but now simplified
+            # elif self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
+            #     return -100
             # free state
-            return -10
+            return -50
 
         # utility initialization for all states
         utility = dict()
@@ -508,6 +508,10 @@ class DSPAPlanner(Planner):
         for _ in range(self.max_iteration):
             delta = 0.0
             for x_unit, y_unit, theta in self.states:
+                # terminal state, goal state
+                if (x_unit, y_unit) == self._get_goal_position():
+                    continue
+
                 q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
                 for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                     if action == 'LEFT':
