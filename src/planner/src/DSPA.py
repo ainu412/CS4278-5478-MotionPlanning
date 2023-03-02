@@ -476,7 +476,7 @@ class DSPAPlanner(Planner):
                 if not self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
                     for theta in [0, 1, 2, 3]:
                         self.states.append((x_unit, y_unit, theta))
-
+        print('states', self.states)
         ###################################<- end of FILL ME
 
     def xy_to_1d_grid_index(self, x, y):
@@ -570,6 +570,7 @@ class DSPAPlanner(Planner):
         # compute optimal policy for each state
         self.action_table = dict()
         for x_unit, y_unit, theta in self.states:
+            print(0)
             q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
             for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                 if action == 'LEFT':
