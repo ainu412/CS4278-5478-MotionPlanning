@@ -649,15 +649,14 @@ if __name__ == "__main__":
     if planner.goal is not None:
         planner.generate_plan(robot.get_current_discrete_state())
 
-    for i, action in enumerate(planner.action_seq):
-        print('step', i)
-
+    i = 0
     # compute action sequence according to policy
     while robot.get_current_discrete_state() != planner._get_goal_position():
         action = planner.action_table[robot.get_current_discrete_state()]
         if action == [1, 0]:
-            action = np.random.choice([[1, 0], [pi / 2, pi / 2], [pi / 2]], p=[0.9, 0.05, 0.05])
-            robot.publish_continuous_control_one(action)
+            action = np.random.choice([[1, 0], [pi / 2, 1], [pi / 2, -1]], p=[0.9, 0.05, 0.05])
+        print('step', i, 'action', action)
+        robot.publish_continuous_control_one(action)
 
     ####################### <- end of Executing
 
