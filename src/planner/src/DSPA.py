@@ -559,6 +559,7 @@ class DSPAPlanner(Planner):
                             q['FORWARD'] = q_sum
                 tmp_utility = max(q.values())
                 delta = max(0, abs(tmp_utility - utility[x_unit, y_unit, theta]))
+                utility[x_unit, y_unit, theta] = tmp_utility
 
             if delta < self.converge_threshold:
                 break
