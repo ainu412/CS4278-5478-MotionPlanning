@@ -207,7 +207,7 @@ class Planner:
             frequency {int} -- simulation frequency. DO NOT CHANGE (default: {10})
 
         Returns:
-            tuple -- next x, y, theta; return None if has collision
+            tuple -- next x, y, theta; return None if has collision or out of boundary
         """
         w_radian = w * np.pi / 2
         first_step = self.motion_predict(x, y, theta * np.pi / 2, v, w_radian)
@@ -511,14 +511,14 @@ class DSPAPlanner(Planner):
                 q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
                 for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                     if action == 'LEFT':
-                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, pi/2)
+                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, 1)
                         if nei_pose is None:
                             continue
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         reward = reward_func(nei_x_unit, nei_y_unit)
                         q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
                     elif action == 'RIGHT':
-                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -pi/2)
+                        nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -1)
                         if nei_pose is None:
                             continue
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
@@ -532,7 +532,7 @@ class DSPAPlanner(Planner):
                     elif action == 'FORWARD':
                         q_sum = 0
                         has_nei_state = False
-                        for v, w, p in [(1, 0, 0.9), (pi/2, pi/2, 0.05), (pi/2, -pi/2, 0.05)]:
+                        for v, w, p in [(1, 0, 0.9), (pi/2, 1, 0.05), (pi/2, -1, 0.05)]:
                             nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, v, w)
                             if nei_pose is None:
                                 continue
@@ -554,14 +554,14 @@ class DSPAPlanner(Planner):
             q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
             for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                 if action == 'LEFT':
-                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, pi / 2)
+                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, 1)
                     if nei_pose is None:
                         continue
                     nei_x_unit, nei_y_unit, nei_theta = nei_pose
                     reward = reward_func(nei_x_unit, nei_y_unit)
                     q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
                 elif action == 'RIGHT':
-                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -pi / 2)
+                    nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -1)
                     if nei_pose is None:
                         continue
                     nei_x_unit, nei_y_unit, nei_theta = nei_pose
@@ -575,7 +575,7 @@ class DSPAPlanner(Planner):
                 elif action == 'FORWARD':
                     q_sum = 0
                     has_nei_state = False
-                    for v, w, p in [(1, 0, 0.9), (pi / 2, pi / 2, 0.05), (pi / 2, -pi / 2, 0.05)]:
+                    for v, w, p in [(1, 0, 0.9), (pi / 2, 1, 0.05), (pi / 2, -1, 0.05)]:
                         nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, v, w)
                         if nei_pose is None:
                             continue
