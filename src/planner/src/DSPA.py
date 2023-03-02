@@ -687,6 +687,8 @@ if __name__ == "__main__":
         i += 1
         robot.publish_discrete_control_one(actual_action)
 
+    ## print utility table
+    
     ####################### <- end of Executing
 
     # TODO: FILL ME!
