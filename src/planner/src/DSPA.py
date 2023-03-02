@@ -705,4 +705,4 @@ if __name__ == "__main__":
 
 
     # for MDP, please dump your policy table into a json file
-    dump_action_table(planner.action_table, "DSPA_map4_{}_{}.json".format(goal[0], goal[1]))
+    dump_action_table(planner.action_table, "DSPA_com1building_{}_{}.json".format(goal[0], goal[1]))
