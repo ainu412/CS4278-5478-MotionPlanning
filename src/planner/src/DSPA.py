@@ -377,6 +377,9 @@ class DSPAPlanner(Planner):
         self.aug_map = None  # occupancy grid with inflation
         self.action_table = {}
 
+        self.unit_width = int(world_width * world_resolution)
+        self.unit_height = int(world_height * world_resolution)
+
         self.world_width = world_width
         self.world_height = world_height
         self.resolution = world_resolution
