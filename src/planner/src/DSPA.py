@@ -659,7 +659,7 @@ if __name__ == "__main__":
         resolution = 0.05
 
     robot = RobotClient()
-    inflation_ratio = 5  # TODO: You should change this value accordingly
+    inflation_ratio = 8  # TODO: You should change this value accordingly
     planner = DSPAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
     planner.set_goal(goal[0], goal[1])
 
