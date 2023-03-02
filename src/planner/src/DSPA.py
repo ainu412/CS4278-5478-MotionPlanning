@@ -500,7 +500,7 @@ class DSPAPlanner(Planner):
         for _ in range(self.max_iteration):
             delta = 0.0
             for x_unit, y_unit, theta in self.states:
-                q = {'FORWARD': -inf, 'LEFT': -inf, 'RIGHT': -inf, 'STAY': -inf}
+                q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
                 for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                     if action == 'LEFT':
                         nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, pi/2)
@@ -543,7 +543,7 @@ class DSPAPlanner(Planner):
         # compute optimal policy for each state
         self.action_table = dict()
         for x_unit, y_unit, theta in self.states:
-            q = {'FORWARD': -inf, 'LEFT': -inf, 'RIGHT': -inf, 'STAY': -inf}
+            q = {'FORWARD': -float("inf"), 'LEFT': -float("inf"), 'RIGHT': -float("inf"), 'STAY': -float("inf")}
             for action in ['FORWARD', 'LEFT', 'RIGHT', 'STAY']:
                 if action == 'LEFT':
                     nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, pi / 2)
