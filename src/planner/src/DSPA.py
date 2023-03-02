@@ -602,7 +602,7 @@ class DSPAPlanner(Planner):
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         if not (0 <= nei_x_unit < self.unit_width and 0 <= nei_y_unit < self.unit_height):
                             return None
-                        
+
                         reward = reward_func(nei_x_unit, nei_y_unit)
                         q_sum += p * (reward + self.discount_factor * utility[nei_pose])
                     if has_nei_state:
@@ -712,3 +712,4 @@ if __name__ == "__main__":
 
     # for MDP, please dump your policy table into a json file
     dump_action_table(planner.action_table, "DSPA_com1building_{}_{}.json".format(goal[0], goal[1]))
+    print('action table', planner.action_table)
