@@ -63,9 +63,15 @@ class Planner:
         self.aug_map = None  # occupancy grid with inflation
         self.action_table = {}
 
+
+
         self.world_width = world_width
         self.world_height = world_height
         self.resolution = world_resolution
+
+        self.unit_width = int(world_width * world_resolution)
+        self.unit_height = int(world_height * world_resolution)
+
         self.inflation_ratio = inflation_ratio
         self.setup_map()
         rospy.sleep(1)
@@ -172,6 +178,8 @@ class Planner:
             x += dx
             y += dy
 
+            if not (0 <= x < self.unit_width and 0 <= y < self.unit_height):
+                return None
             if self.collision_checker(int(x / self.resolution), int(y / self.resolution)):
                 return None
             theta += w / frequency
@@ -373,10 +381,7 @@ class DSPAPlanner(Planner):
         self.world_height = world_height
         self.resolution = world_resolution
 
-        ######### ->newly added for DSPAPlanner
-        self.unit_width = int(world_width * world_resolution)
-        self.unit_height = int(world_height * world_resolution)
-
+        ######### ->newly added for DSPAPlanne
         self.states = None
         self.max_iteration = max_iteration
         self.discount_factor = discount_factor
