@@ -657,12 +657,15 @@ if __name__ == "__main__":
     # compute action sequence according to policy
     while robot.get_current_discrete_state() != planner._get_goal_position():
         nominal_action = planner.action_table[robot.get_current_discrete_state()]
-        if nominal_action == [1, 0]:
-            idx = np.random.choice(3, size=1, p=[0.9, 0.05, 0.05])[0]
-            actual_actions_list = [[1, 0], [pi / 2, 1], [pi / 2, -1]]
-            actual_action = actual_actions_list[idx]
-        else:
-            actual_action = nominal_action
+        # if nominal_action == [1, 0]:
+        #     idx = np.random.choice(3, size=1, p=[0.9, 0.05, 0.05])[0]
+        #     actual_actions_list = [[1, 0], [pi / 2, 1], [pi / 2, -1]]
+        #     actual_action = actual_actions_list[idx]
+        # else:
+        #     actual_action = nominal_action
+
+        # assume perfect control
+        actual_action = nominal_action
         print('step', i, 'action', actual_action)
         robot.publish_continuous_control_one(actual_action)
 
