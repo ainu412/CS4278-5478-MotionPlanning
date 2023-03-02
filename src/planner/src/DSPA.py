@@ -463,7 +463,7 @@ class DSPAPlanner(Planner):
         for x_unit in range(self.unit_width):
             for y_unit in range(self.unit_height):
                 if not self.collision_checker(int(x_unit / self.resolution), int(y_unit / self.resolution)):
-                    for theta in [-pi, -pi/2, 0, pi/2]:
+                    for theta in [0, 1, 2, 3]:
                         self.states.append((x_unit, y_unit, theta))
 
         ###################################<- end of FILL ME
