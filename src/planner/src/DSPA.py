@@ -365,7 +365,7 @@ class RobotClient:
 
 class DSPAPlanner(Planner):
     def __init__(self, world_width, world_height, world_resolution, inflation_ratio=3,
-                 max_iteration=100, discount_factor=0.9, converge_threshold=0.1):
+                 max_iteration=10, discount_factor=0.9, converge_threshold=0.1):
         """init function of the base planner. You should develop your own planner
         using this class as a base.
 
@@ -399,6 +399,7 @@ class DSPAPlanner(Planner):
         self.max_iteration = max_iteration
         self.discount_factor = discount_factor
         self.converge_threshold = converge_threshold
+        self.utility = None
         ######### <-
 
         self.inflation_ratio = inflation_ratio
@@ -605,6 +606,8 @@ class DSPAPlanner(Planner):
             self.action_table[(x_unit, y_unit, theta)] = action_str2li[max(q, key=q.get)]
 
 
+        self.utility = utility
+
 
     def collision_checker(self, x, y):
         """TODO: FILL ME!
@@ -666,7 +669,9 @@ if __name__ == "__main__":
     i = 0
     # compute action sequence according to policy
     while robot.get_current_discrete_state() != planner._get_goal_position():
-        nominal_action = planner.action_table[robot.get_current_discrete_state()]
+        cur_loc = robot.get_current_discrete_state()
+        nominal_action = planner.action_table[cur_loc]
+
         # if nominal_action == [1, 0]:
         #     idx = np.random.choice(3, size=1, p=[0.9, 0.05, 0.05])[0]
         #     actual_actions_list = [[1, 0], [pi / 2, 1], [pi / 2, -1]]
@@ -676,7 +681,9 @@ if __name__ == "__main__":
 
         # assume perfect control
         actual_action = nominal_action
-        print('step', i, 'action', actual_action)
+        print('step', i, 'loc', cur_loc,
+              'cur loc utility', planner.utility[cur_loc],
+              'action', actual_action)
         i += 1
         robot.publish_discrete_control_one(actual_action)
 
