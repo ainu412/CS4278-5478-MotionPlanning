@@ -492,9 +492,9 @@ class DSPAPlanner(Planner):
             return -1
 
         # utility initialization for all states
-        v = dict()
+        utility = dict()
         for s in self.states:
-            v[s] = 0
+            utility[s] = 0
 
         # compute utility for each state
         for _ in range(self.max_iteration):
@@ -508,19 +508,19 @@ class DSPAPlanner(Planner):
                             continue
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         reward = reward_func(nei_x_unit, nei_y_unit)
-                        q['LEFT'] = reward + self.discount_factor * v[nei_pose]
+                        q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
                     elif action == 'RIGHT':
                         nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -pi/2)
                         if nei_pose is None:
                             continue
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         reward = reward_func(nei_x_unit, nei_y_unit)
-                        q['RIGHT'] = reward + self.discount_factor * v[nei_pose]
+                        q['RIGHT'] = reward + self.discount_factor * utility[nei_pose]
                     elif action == 'STAY':
                         nei_pose = x_unit, y_unit, theta
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         reward = reward_func(nei_x_unit, nei_y_unit)
-                        q['STAY'] = reward + self.discount_factor * v[nei_pose]
+                        q['STAY'] = reward + self.discount_factor * utility[nei_pose]
                     elif action == 'FORWARD':
                         q_sum = 0
                         has_nei_state = False
@@ -531,11 +531,11 @@ class DSPAPlanner(Planner):
                             has_nei_state = True
                             nei_x_unit, nei_y_unit, nei_theta = nei_pose
                             reward = reward_func(nei_x_unit, nei_y_unit)
-                            q_sum += p * (reward + self.discount_factor * v[nei_pose])
+                            q_sum += p * (reward + self.discount_factor * utility[nei_pose])
                         if has_nei_state:
                             q['FORWARD'] = q_sum
-                tmp_v = max(q.values())
-                delta = max(0, abs(tmp_v - v[x_unit, y_unit, theta]))
+                tmp_utility = max(q.values())
+                delta = max(0, abs(tmp_utility - utility[x_unit, y_unit, theta]))
 
             if delta < self.converge_threshold:
                 break
@@ -551,19 +551,19 @@ class DSPAPlanner(Planner):
                         continue
                     nei_x_unit, nei_y_unit, nei_theta = nei_pose
                     reward = reward_func(nei_x_unit, nei_y_unit)
-                    q['LEFT'] = reward + self.discount_factor * v[nei_pose]
+                    q['LEFT'] = reward + self.discount_factor * utility[nei_pose]
                 elif action == 'RIGHT':
                     nei_pose = self.discrete_motion_predict(x_unit, y_unit, theta, 0, -pi / 2)
                     if nei_pose is None:
                         continue
                     nei_x_unit, nei_y_unit, nei_theta = nei_pose
                     reward = reward_func(nei_x_unit, nei_y_unit)
-                    q['RIGHT'] = reward + self.discount_factor * v[nei_pose]
+                    q['RIGHT'] = reward + self.discount_factor * utility[nei_pose]
                 elif action == 'STAY':
                     nei_pose = x_unit, y_unit, theta
                     nei_x_unit, nei_y_unit, nei_theta = nei_pose
                     reward = reward_func(nei_x_unit, nei_y_unit)
-                    q['STAY'] = reward + self.discount_factor * v[nei_pose]
+                    q['STAY'] = reward + self.discount_factor * utility[nei_pose]
                 elif action == 'FORWARD':
                     q_sum = 0
                     has_nei_state = False
@@ -574,7 +574,7 @@ class DSPAPlanner(Planner):
                         has_nei_state = True
                         nei_x_unit, nei_y_unit, nei_theta = nei_pose
                         reward = reward_func(nei_x_unit, nei_y_unit)
-                        q_sum += p * (reward + self.discount_factor * v[nei_pose])
+                        q_sum += p * (reward + self.discount_factor * utility[nei_pose])
                     if has_nei_state:
                         q['FORWARD'] = q_sum
             # string to action list[2]
