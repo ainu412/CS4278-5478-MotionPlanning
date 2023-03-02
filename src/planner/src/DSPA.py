@@ -662,15 +662,6 @@ if __name__ == "__main__":
     # result = np.array(planner.action_seq)
     # np.savetxt("DSPA_map1_{}_{}.txt".format(goal[0], goal[1]), result, fmt="%.2e")
 
-    # test without executing the robot
-    inflation_ratio = 5  # TODO: You should change this value accordingly
-    planner = DSPAPlanner(width, height, resolution, inflation_ratio=inflation_ratio)
-    planner.set_goal(goal[0], goal[1])
-
-    # print('5,3, collision?', planner.collision_checker(int(5/planner.resolution), int(3/planner.resolution)))
-
-    if planner.goal is not None:
-        planner.generate_plan([1, 1, 0])
 
     # for MDP, please dump your policy table into a json file
     dump_action_table(planner.action_table, "DSPA_map1_{}_{}.json".format(goal[0], goal[1]))
